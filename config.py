@@ -1,25 +1,31 @@
 """
 config.py — configuração do app, toda vinda de variáveis de ambiente.
 
-DATABASE_URL, se definida, manda em tudo (útil para apontar para SQLite em
-testes). Sem ela, a URI do MySQL é montada a partir das variáveis MYSQL_*,
-com os padrões de desenvolvimento local.
+DATABASE_URL manda em tudo. Em produção, aponte para o Supabase (Postgres),
+usando a string do "Session pooler". Sem DATABASE_URL, o app usa um SQLite
+local (rastro.sqlite3), útil só para desenvolvimento: nenhuma senha de banco
+fica escrita no código.
 """
 
 import os
 
 
+def _database_uri():
+    uri = os.environ.get("DATABASE_URL", "").strip()
+    if not uri:
+        return "sqlite:///rastro.sqlite3"
+    # o SQLAlchemy precisa do driver explícito; Supabase/Railway entregam "postgres(ql)://"
+    if uri.startswith("postgres://"):
+        uri = "postgresql://" + uri[len("postgres://"):]
+    if uri.startswith("postgresql://"):
+        uri = "postgresql+psycopg2://" + uri[len("postgresql://"):]
+    return uri
+
+
 class Config:
     SECRET_KEY = os.environ.get("RASTRO_SECRET_KEY", "rastro-dev-secret")
 
-    MYSQL_HOST = os.environ.get("MYSQL_HOST", "localhost")
-    MYSQL_PORT = os.environ.get("MYSQL_PORT", "3306")
-    MYSQL_USER = os.environ.get("MYSQL_USER", "root")
-    MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD", "90873600144!55KM")
-    MYSQL_DB = os.environ.get("MYSQL_DB", "rastrodb")
-
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL") or (
-        f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}"
-        f"@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}?charset=utf8mb4"
-    )
+    SQLALCHEMY_DATABASE_URI = _database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # evita erro de "conexão fechada" quando o pooler derruba conexões ociosas
+    SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True, "pool_recycle": 300}
