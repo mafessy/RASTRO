@@ -8,8 +8,8 @@ Todas as rotas exigem is_admin (helpers.admin_required).
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
-from helpers import admin_required, current_user
-from models import (
+from backend.helpers import admin_required, current_user
+from backend.models import (
     AIGoalDraft,
     CheckinLog,
     DailyGoal,
@@ -23,7 +23,7 @@ from models import (
     WeeklyGoal,
     db,
 )
-from services import goal_engine
+from backend.services import goal_engine
 
 bp = Blueprint("admin", __name__)
 
