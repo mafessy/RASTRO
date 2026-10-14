@@ -22,15 +22,15 @@ from flask import (
     url_for,
 )
 
-from data import (
+from backend.data import (
     CVV_MESSAGE,
     VOLUNTEER_INTRO_MESSAGE,
     VOLUNTEER_TICKET_AREAS,
     VOLUNTEER_WAIT_MESSAGE,
     classify_ticket_urgency,
 )
-from helpers import current_user, current_volunteer, login_required, volunteer_login_required
-from models import Volunteer, VolunteerMessage, VolunteerTicket, db
+from backend.helpers import current_user, current_volunteer, login_required, volunteer_login_required
+from backend.models import Volunteer, VolunteerMessage, VolunteerTicket, db
 
 bp = Blueprint("volunteer", __name__)
 
