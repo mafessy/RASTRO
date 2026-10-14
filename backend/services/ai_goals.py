@@ -16,7 +16,7 @@ admin aprovar (ver goal_engine.activate_draft).
 import json
 import os
 
-from data import PATTERNS, build_full_cycle
+from backend.data import PATTERNS, build_full_cycle
 
 ANTHROPIC_MODEL = "claude-sonnet-4-6"
 
