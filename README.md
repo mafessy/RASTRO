@@ -198,19 +198,20 @@ RASTRO-main/
     └── img/                # Imagens e elementos visuais
 ```
 
+---
 
 ## Privacidade e uso responsável
 
 O Rastro pode lidar com informações pessoais, como relatos, registros de humor e objetivos. Em uma implantação real, é essencial:
 
 - Informar com clareza quais dados são coletados e para que são utilizados.
-- Restringir o acesso administrativo e proteger credenciais.
+- Resttringir o acesso administrativo e proteger credenciais.
 - Utilizar HTTPS e configurações seguras de sessão.
 - Revisar políticas de retenção, exclusão e anonimização dos dados.
 - Avaliar cuidadosamente as integrações com serviços externos.
 - Não utilizar o sistema como substituto de atendimento profissional.
 
-As medidas necessárias dependem do ambiente em que a aplicação será utilizada. Antes de disponibilizar o sistema publicamente, é necessário revisar as configurações de segurança, o tratamento de dados e as obrigações legais aplicáveis, incluindo a legislação de proteção de dados.
+As medidas necessárias dependem do ambiente em que a aplicação será utilizada. Antes de acessar o sistema publicamente, é necessário revisar as configurações de segurança, o tratamento de dados e as obrigações legais aplicáveis, incluindo a legislação de proteção de dados.
 
 A Política de Privacidade e os Termos de Uso do Rastro complementam estas orientações e devem ser consultados para conhecer as condições específicas aplicáveis à plataforma. Este README não substitui esses documentos.
 
@@ -222,7 +223,7 @@ O Rastro é um projeto em desenvolvimento contínuo por iniciativa da equipe SIM
 
 Este documento tem finalidade informativa e técnica. A descrição das funcionalidades, tecnologias e instruções de execução não constitui autorização para reutilizar, copiar, modificar ou redistribuir o projeto.
 
-Solicitações de acesso, demonstração, parceria ou autorização de uso devem ser encaminhadas aos responsáveis pelo Rastro.
+Solicitações de acesso, demonstração, parceria ou autorização de uso devem ser encaminhadas aos responsáveis pelo Rastro através do email (rastroadm.contato@gmail.com).
 
 
 ## Autoria e direitos reservados
@@ -234,4 +235,3 @@ Concebido por uma equipe de quatro integrantes a partir do desafio proposto pelo
 O nome Rastro, sua identidade visual, seu código-fonte, seus textos, sua estrutura e os demais materiais originais do projeto são protegidos pela legislação aplicável.
 
 Nenhuma licença aberta é concedida por este README. Qualquer uso que dependa de autorização dos titulares deverá ser previamente autorizado por escrito, respeitando também os direitos de terceiros e as licenças dos componentes utilizados.
-
