@@ -74,28 +74,26 @@ Estrutura do projeto:
 
 ```text
 RASTRO-main/
-├── app.py                  # Inicialização da aplicação Flask
-├── cli.py                  # Comandos de configuração pelo terminal
-├── config.py               # Configurações e conexão com o banco
-├── data.py                 # Conteúdos fixos, regras e dados da experiência
-├── helpers.py              # Autenticação e funções auxiliares
-├── models.py               # Modelos e tabelas do banco
-├── requirements.txt        # Dependências Python
-├── routes/
-│   ├── auth.py             # Página inicial, login e cadastro
-│   ├── main.py             # TALK, 1%, SECRET, PERFIL e APIs
-│   ├── world.py            # WORLD e Mundo Real
-│   ├── admin.py            # Painel administrativo
-│   ├── volunteer.py        # Atendimento voluntário
-│   └── db_sync.py          # Sincronização da estrutura do banco
-├── services/
-│   ├── ai_goals.py         # Geração de propostas de metas
-│   └── goal_engine.py      # Regras do ciclo de metas
-├── templates/              # Páginas HTML/Jinja
-└── static/
-    ├── css/                # Folhas de estilo
-    ├── js/                 # Scripts do frontend
-    └── img/                # Imagens e elementos visuais
+├── app.py                     # Ponto de entrada compatível (local/WSGI)
+├── backend/                   # Aplicação Python e regras de negócio
+│   ├── app.py                 # Application factory Flask
+│   ├── config.py              # Configuração por variáveis de ambiente
+│   ├── models.py              # Modelos e persistência SQLAlchemy
+│   ├── data.py                # Conteúdo e regras da experiência
+│   ├── helpers.py             # Autenticação e utilitários compartilhados
+│   ├── cli.py                 # Comandos Flask
+│   ├── routes/                # Blueprints por domínio funcional
+│   └── services/              # Serviços e regras de negócio
+├── frontend/                  # Recursos apresentados ao usuário
+│   ├── templates/             # Templates HTML/Jinja
+│   └── static/                # CSS, JavaScript e imagens
+├── tests/                     # Testes automatizados
+├── docs/                      # Documentação técnica e arquitetura
+├── requirements.txt           # Dependências Python
+├── .env.example               # Exemplo de configuração local
+├── .gitignore                 # Exclusões de artefatos e segredos
+├── README.md                  # Visão geral do projeto
+└── SETUP.md                   # Instalação e execução
 ```
 
 
