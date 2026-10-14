@@ -1,4 +1,4 @@
-# Rastro — Pequenos passos também deixam marcas.
+Rastro — Pequenos passos também deixam marcas
 
 O **Rastro** é uma plataforma digital voltada para jovens que busca incentivar a construção de hábitos mais saudáveis, a socialização e o bem-estar de forma gradual, personalizada e acessível.
 
@@ -6,7 +6,7 @@ A proposta parte de uma ideia simples: mudanças importantes não precisam come�
 
 O Rastro utiliza a tecnologia como uma ferramenta para incentivar experiências positivas também fora da tela, estimulando o autocuidado, a descoberta de interesses e a conexão com o mundo ao redor.
 
-## Aviso de propriedade intelectual e uso
+Aviso de propriedade intelectual e uso:
 
 O **Rastro é um projeto desenvolvido pela SIMP - Estratégias**. Seu código-fonte, identidade visual, textos, estrutura, funcionalidades e demais materiais originais são protegidos pelos direitos de propriedade intelectual aplicáveis.
 
@@ -19,7 +19,7 @@ As bibliotecas, ferramentas e dependências de terceiros permanecem sujeitas às
 A Política de Privacidade e os Termos de Uso do Rastro complementam as informações sobre a utilização da plataforma. Este aviso não substitui esses documentos nem constitui aconselhamento jurídico.
 
 
-## Contexto e origem do projeto
+Contexto e origem do projeto:
 
 O Rastro surgiu a partir da participação da **Escola Estadual Manuel Casasanta no Projeto Ação e Cidadania**, promovido pela **Junior Achievement Minas Gerais**. A iniciativa propôs aos alunos o desafio de desenvolver uma solução inovadora, tecnicamente possível e economicamente viável para responder à seguinte questão: **como tornar os jovens mais saudáveis?**
 
@@ -29,7 +29,7 @@ Embora o projeto não tenha avançado para a etapa final da competição, decidi
 
 Assim, o Rastro deixou de ser apenas uma solução idealizada para uma competição estudantil e passou a representar um projeto que continuamos construindo por iniciativa própria, com o objetivo de transformar uma ideia em uma ferramenta que incentive os jovens a cuidarem de si mesmos e a desenvolverem hábitos mais positivos.
 
-## Funcionalidades
+Funcionalidades:
 
 - **TALK — conversa inicial:** espaço para o usuário refletir sobre seu momento, seus objetivos e as barreiras que dificultam seu avanço.
 - **1% — metas graduais:** organiza a jornada em metas mensais, semanais e diárias. As propostas passam pela revisão de um administrador antes de serem ativadas.
@@ -45,7 +45,7 @@ Assim, o Rastro deixou de ser apenas uma solução idealizada para uma competiç
 > **Importante:** o Rastro é uma ferramenta de apoio, reflexão e incentivo a hábitos positivos. Não substitui acompanhamento psicológico, atendimento médico ou serviços de emergência. A classificação de urgência do sistema é automatizada por palavras-chave e não constitui diagnóstico clínico.
 
 
-## Como funciona a jornada
+Como funciona a jornada:
 
 A experiência é liberada progressivamente para incentivar o usuário a avançar sem pressão:
 
@@ -58,7 +58,7 @@ A experiência é liberada progressivamente para incentivar o usuário a avança
 O ciclo de metas contempla **1 meta mensal, 4 metas semanais e 140 metas diárias**. As propostas são geradas por integração com a API da Anthropic, quando configurada, ou por um mecanismo alternativo baseado em regras. Em ambos os casos, ficam pendentes até a aprovação administrativa.
 
 
-## Tecnologias utilizadas
+Tecnologias utilizadas:
 
 - **Python:** linguagem principal do backend.
 - **Flask:** estrutura da aplicação web e gerenciamento de rotas.
@@ -70,107 +70,7 @@ O ciclo de metas contempla **1 meta mensal, 4 metas semanais e 140 metas diária
 - **Anthropic API:** geração opcional de propostas de metas por inteligência artificial.
 - **Gunicorn:** servidor WSGI para implantação.
 
-
-## Como executar localmente
-
-As instruções abaixo são destinadas à execução em um ambiente autorizado, para fins de desenvolvimento, demonstração ou avaliação.
-
-### 1. Pré-requisitos
-
-- Python 3.10 ou superior (recomendado).
-- `pip`.
-- Opcional: PostgreSQL e uma chave de API da Anthropic.
-
-### 2. Obtenha os arquivos do projeto
-
-Utilize os arquivos disponibilizados pelos responsáveis pelo Rastro.
-
-Caso exista um repositório autorizado para clonagem, utilize o endereço correspondente:
-
-```bash
-git clone <URL_DO_REPOSITORIO>
-cd RASTRO-main
-```
-
-Se você recebeu o projeto como arquivo ZIP, extraia-o e abra a pasta que contém `app.py`.
-
-### 3. Crie um ambiente virtual
-
-**Windows (PowerShell):**
-
-```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-**Linux/macOS:**
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-### 4. Instale as dependências
-
-```bash
-pip install -r requirements.txt
-```
-
-### 5. Configure as variáveis de ambiente
-
-A configuração do banco depende dos parâmetros definidos no projeto. Se o sistema estiver configurado para utilizar SQLite por padrão, o banco local será criado conforme a implementação. Para utilizar PostgreSQL, configure `DATABASE_URL`.
-
-**Windows (PowerShell):**
-
-```powershell
-$env:DATABASE_URL="postgresql://USUARIO:SENHA@HOST:5432/NOME_DO_BANCO"
-$env:RASTRO_SECRET_KEY="substitua-por-uma-chave-segura"
-$env:ANTHROPIC_API_KEY="sua-chave-da-anthropic"
-```
-
-**Linux/macOS:**
-
-```bash
-export DATABASE_URL="postgresql://USUARIO:SENHA@HOST:5432/NOME_DO_BANCO"
-export RASTRO_SECRET_KEY="substitua-por-uma-chave-segura"
-export ANTHROPIC_API_KEY="sua-chave-da-anthropic"
-```
-
-**Atenção:**
-
-- `DATABASE_URL` é opcional quando a configuração permite utilizar SQLite automaticamente.
-- `ANTHROPIC_API_KEY` é opcional. Sem a chave, ou se a API não estiver disponível, o sistema pode utilizar a geração de metas baseada em regras.
-- Defina uma `RASTRO_SECRET_KEY` própria e segura em ambientes de produção.
-- **Nunca publique senhas, tokens ou chaves de API no repositório.**
-
-### 6. Inicialize o banco de dados
-
-```bash
-flask --app app init-db
-```
-
-### 7. Crie uma conta de administrador
-
-```bash
-flask --app app create-admin
-```
-
-Siga as instruções do terminal para cadastrar nome, e-mail e senha. Essa conta permite acessar o painel administrativo em `/admin`.
-
-### 8. Inicie a aplicação
-
-```bash
-python app.py
-```
-
-Abra no navegador:
-
-[http://localhost:5000](http://localhost:5000)
-
-Para encerrar o servidor, utilize `Ctrl + C` no terminal.
-
-
-## Estrutura do projeto
+Estrutura do projeto:
 
 ```text
 RASTRO-main/
@@ -198,11 +98,10 @@ RASTRO-main/
     └── img/                # Imagens e elementos visuais
 ```
 
----
 
 ## Privacidade e uso responsável
 
-O Rastro pode lidar com informações pessoais, como relatos, registros de humor e objetivos. Em uma implantação real, é essencial:
+O Rastro pode lidar com informações pessoais, como relatos, registros de humor e objetivos. Em uma implantação real, é de nossa responsabilidade:
 
 - Informar com clareza quais dados são coletados e para que são utilizados.
 - Resttringir o acesso administrativo e proteger credenciais.
@@ -217,7 +116,7 @@ A Política de Privacidade e os Termos de Uso do Rastro complementam estas orien
 
 
 
-## Situação do projeto
+Situação do projeto:
 
 O Rastro é um projeto em desenvolvimento contínuo por iniciativa da equipe SIMP - Estratégias. Suas funcionalidades, fluxos e integrações podem ser aprimorados ao longo das etapas de desenvolvimento e avaliação.
 
@@ -226,7 +125,7 @@ Este documento tem finalidade informativa e técnica. A descrição das funciona
 Solicitações de acesso, demonstração, parceria ou autorização de uso devem ser encaminhadas aos responsáveis pelo Rastro através do email (rastroadm.contato@gmail.com).
 
 
-## Autoria e direitos reservados
+Autoria e direitos reservados:
 
 **Rastro — SIMP - Estratégias**
 
