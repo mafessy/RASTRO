@@ -12,16 +12,23 @@ services/, as tabelas em models.py e o conteúdo fixo em data.py.
     flask --app app init-db  cria as tabelas
 """
 
+from pathlib import Path
+
 from flask import Flask, session
 
-import cli
-import routes
-from config import Config
-from models import db
+from backend import cli
+from backend import routes
+from backend.config import Config
+from backend.models import db
 
 
 def create_app(config_object=Config):
-    app = Flask(__name__)
+    project_root = Path(__file__).resolve().parent.parent
+    app = Flask(
+        __name__,
+        template_folder=str(project_root / "frontend" / "templates"),
+        static_folder=str(project_root / "frontend" / "static"),
+    )
     app.config.from_object(config_object)
     app.secret_key = app.config["SECRET_KEY"]
 
