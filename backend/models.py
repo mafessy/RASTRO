@@ -307,7 +307,7 @@ class VolunteerTicket(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def area_labels(self):
-        from data import VOLUNTEER_TICKET_AREAS
+        from backend.data import VOLUNTEER_TICKET_AREAS
         keys = (self.areas or "").split(",") if self.areas else []
         return [VOLUNTEER_TICKET_AREAS.get(k, k) for k in keys if k]
 
