@@ -1,4 +1,4 @@
-/* RASTRO — céu animado: estrelas fixas + estrelas cadentes em canvas */
+/* céu animado: estrelas fixas + estrelas cadentes em canvas */
 
 (function () {
   const canvas = document.getElementById("starfield");
@@ -75,7 +75,7 @@
   function draw(t) {
     ctx.clearRect(0, 0, W, H);
 
-    // estrelas fixas, com leve cintilar
+    // estrelas fixas, com cintilar
     for (const s of stars) {
       const tw = reduceMotion ? 0 : Math.sin(t * s.twinkleSpeed + s.phase) * 0.25;
       ctx.beginPath();
@@ -114,7 +114,7 @@
       ctx.lineTo(tailX, tailY);
       ctx.stroke();
 
-      // núcleo brilhante
+      // núcleo com brilho
       ctx.beginPath();
       ctx.arc(c.x, c.y, c.width * 1.4, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${r},${g},${b},${c.life})`;
