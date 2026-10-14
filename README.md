@@ -99,7 +99,7 @@ RASTRO-main/
 ```
 
 
-## Privacidade e uso responsável
+Privacidade e uso responsável
 
 O Rastro pode lidar com informações pessoais, como relatos, registros de humor e objetivos. Em uma implantação real, é de nossa responsabilidade:
 
