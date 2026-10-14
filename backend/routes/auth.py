@@ -17,7 +17,7 @@ from flask import (
     url_for,
 )
 
-from models import User, WorldItem, db
+from backend.models import User, WorldItem, db
 
 bp = Blueprint("auth", __name__)
 
