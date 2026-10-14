@@ -39,7 +39,7 @@ _PAGE = """
 <html>
 <head><meta charset="utf-8"><title>Sincronização do banco</title></head>
 <body style="font-family: 'Courier New', monospace; background:#0a1220; color:#dfe8ff; padding:28px; line-height:1.6;">
-  <h2 style="color:#4fe0b3;">Sincronização do banco — models.py &harr; MySQL</h2>
+  <h2 style="color:#4fe0b3;">Sincronização do banco — models.py &harr; banco de dados</h2>
   <pre style="background:#0f1c33; padding:16px; border-radius:8px; white-space:pre-wrap;">{{ log_text }}</pre>
   <p style="color:#f7bd6a; font-size:13px; max-width:640px;">
     Colunas novas são sempre criadas como opcionais (aceitam NULL), mesmo
@@ -82,7 +82,7 @@ def sync_db():
                 continue
             try:
                 col_type = column.type.compile(dialect=engine.dialect)
-                ddl = f"ALTER TABLE `{table_name}` ADD COLUMN `{column.name}` {col_type}"
+                ddl = (f"ALTER TABLE {engine.dialect.identifier_preparer.quote(table_name)} ADD COLUMN {engine.dialect.identifier_preparer.quote(column.name)} {col_type}")
                 with engine.connect() as conn:
                     conn.execute(text(ddl))
                     conn.commit()
