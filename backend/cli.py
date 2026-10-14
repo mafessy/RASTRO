@@ -6,7 +6,7 @@ cli.py — comandos de terminal do projeto (`flask --app app <comando>`).
     flask --app app create-volunteer  cadastra um voluntário
 """
 
-from models import User, Volunteer, WorldItem, db
+from backend.models import User, Volunteer, WorldItem, db
 
 
 def register(app):
