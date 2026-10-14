@@ -11,7 +11,7 @@ from functools import wraps
 
 from flask import redirect, session, url_for
 
-from models import MonthlyCycle, User, Volunteer, db
+from backend.models import MonthlyCycle, User, Volunteer, db
 
 
 # ---------------- sessão ----------------
