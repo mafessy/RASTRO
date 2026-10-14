@@ -16,7 +16,7 @@ from flask import (
     url_for,
 )
 
-from data import (
+from backend.data import (
     BARRIER_OPTIONS,
     BENEFITS,
     MOOD_OPTIONS,
@@ -28,7 +28,7 @@ from data import (
     unlocked_elements,
     world_progress,
 )
-from helpers import (
+from backend.helpers import (
     completed_count_for,
     current_user,
     is_meaningful_text,
@@ -36,7 +36,7 @@ from helpers import (
     owned_costs_for,
     unlock,
 )
-from models import (
+from backend.models import (
     DAILY_POINTS,
     MONTHLY_POINTS,
     WEEKLY_POINTS,
@@ -51,7 +51,7 @@ from models import (
     WeeklyGoal,
     db,
 )
-from services import ai_goals, goal_engine
+from backend.services import ai_goals, goal_engine
 
 bp = Blueprint("main", __name__)
 
