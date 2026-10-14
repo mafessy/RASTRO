@@ -18,7 +18,6 @@ As bibliotecas, ferramentas e dependências de terceiros permanecem sujeitas às
 
 A Política de Privacidade e os Termos de Uso do Rastro complementam as informações sobre a utilização da plataforma. Este aviso não substitui esses documentos nem constitui aconselhamento jurídico.
 
----
 
 ## Contexto e origem do projeto
 
@@ -45,7 +44,6 @@ Assim, o Rastro deixou de ser apenas uma solução idealizada para uma competiç
 
 > **Importante:** o Rastro é uma ferramenta de apoio, reflexão e incentivo a hábitos positivos. Não substitui acompanhamento psicológico, atendimento médico ou serviços de emergência. A classificação de urgência do sistema é automatizada por palavras-chave e não constitui diagnóstico clínico.
 
----
 
 ## Como funciona a jornada
 
@@ -59,7 +57,6 @@ A experiência é liberada progressivamente para incentivar o usuário a avança
 
 O ciclo de metas contempla **1 meta mensal, 4 metas semanais e 140 metas diárias**. As propostas são geradas por integração com a API da Anthropic, quando configurada, ou por um mecanismo alternativo baseado em regras. Em ambos os casos, ficam pendentes até a aprovação administrativa.
 
----
 
 ## Tecnologias utilizadas
 
@@ -73,7 +70,6 @@ O ciclo de metas contempla **1 meta mensal, 4 metas semanais e 140 metas diária
 - **Anthropic API:** geração opcional de propostas de metas por inteligência artificial.
 - **Gunicorn:** servidor WSGI para implantação.
 
----
 
 ## Como executar localmente
 
@@ -173,7 +169,6 @@ Abra no navegador:
 
 Para encerrar o servidor, utilize `Ctrl + C` no terminal.
 
----
 
 ## Estrutura do projeto
 
@@ -203,7 +198,6 @@ RASTRO-main/
     └── img/                # Imagens e elementos visuais
 ```
 
----
 
 ## Privacidade e uso responsável
 
@@ -220,9 +214,7 @@ As medidas necessárias dependem do ambiente em que a aplicação será utilizad
 
 A Política de Privacidade e os Termos de Uso do Rastro complementam estas orientações e devem ser consultados para conhecer as condições específicas aplicáveis à plataforma. Este README não substitui esses documentos.
 
-**Dados demonstrativos:** todos os dados demonstrativos e pacientes apresentados no sistema são fictícios e utilizados exclusivamente para fins de desenvolvimento, testes e demonstração. Não correspondem a pessoas ou registros clínicos reais.
 
----
 
 ## Situação do projeto
 
@@ -232,7 +224,6 @@ Este documento tem finalidade informativa e técnica. A descrição das funciona
 
 Solicitações de acesso, demonstração, parceria ou autorização de uso devem ser encaminhadas aos responsáveis pelo Rastro.
 
----
 
 ## Autoria e direitos reservados
 
@@ -244,4 +235,3 @@ O nome Rastro, sua identidade visual, seu código-fonte, seus textos, sua estrut
 
 Nenhuma licença aberta é concedida por este README. Qualquer uso que dependa de autorização dos titulares deverá ser previamente autorizado por escrito, respeitando também os direitos de terceiros e as licenças dos componentes utilizados.
 
-**Rastro — Pequenos passos também deixam marcas.**
