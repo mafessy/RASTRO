@@ -29,8 +29,8 @@
 from flask import Blueprint, render_template_string, url_for
 from sqlalchemy import inspect, text
 
-from helpers import admin_required
-from models import db
+from backend.helpers import admin_required
+from backend.models import db
 
 bp = Blueprint("db_sync", __name__)
 
