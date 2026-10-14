@@ -3,7 +3,7 @@ RASTRO — dados e regras do TALK/1%/WORLD.
 
 Constantes e funções puras usadas para interpretar as respostas do TALK,
 montar as metas do 1% e calcular o progresso do WORLD. Sem estado de usuário
-aqui — isso agora vive no banco (models.py).
+aqui — isso está no banco (models.py).
 """
 
 WORLD_ELEMENTS = [
