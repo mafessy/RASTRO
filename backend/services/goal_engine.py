@@ -8,7 +8,7 @@ quando commitar (facilita testar e evitar commits parciais).
 
 from datetime import datetime
 
-from models import (
+from backend.models import (
     CYCLE_BONUS_POINTS,
     DAILY_POINTS,
     MONTHLY_POINTS,
@@ -46,7 +46,7 @@ def activate_draft(draft, admin_user):
 
     # se havia um ciclo ativo (ex.: usuário pediu atualização de objetivo no
     # meio do mês), ele é encerrado como substituído antes do novo começar
-    from models import MonthlyCycle as _MonthlyCycle
+    from backend.models import MonthlyCycle as _MonthlyCycle
     previous_active = _MonthlyCycle.query.filter_by(user_id=draft.user_id, status="ativo").first()
     if previous_active:
         previous_active.status = "substituido"
