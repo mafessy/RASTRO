@@ -30,9 +30,9 @@ from flask import (
     url_for,
 )
 
-from helpers import current_user, login_required, owned_costs_for, unlock
-from models import WorldItem, WorldRealInteraction, WorldRealPreference, db
-from data import (
+from backend.helpers import current_user, login_required, owned_costs_for, unlock
+from backend.models import WorldItem, WorldRealInteraction, WorldRealPreference, db
+from backend.data import (
     BENEFITS,
     WORLD_ELEMENT_MESSAGES,
     WORLD_ELEMENTS,
