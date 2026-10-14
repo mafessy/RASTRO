@@ -1,12 +1,12 @@
-# RASTRO — configuração técnica
+RASTRO — configuração técnica
 
-## 1. Instalar as dependências
+1. Instalar as dependências
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 2. Criar o banco MySQL
+2. Criar o banco MySQL
 
 No MySQL (via terminal, MySQL Workbench, phpMyAdmin etc.):
 
@@ -14,7 +14,7 @@ No MySQL (via terminal, MySQL Workbench, phpMyAdmin etc.):
 CREATE DATABASE rastro_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-## 3. Configurar as variáveis de ambiente
+3. Configurar as variáveis de ambiente
 
 O app lê a conexão do banco a partir de variáveis de ambiente (com valores padrão
 para desenvolvimento local em `root`/sem senha/`localhost`):
@@ -50,7 +50,7 @@ motor de templates do TALK, só que expandido) — o usuário nunca fica sem
 metas, e o rascunho gerado (por IA ou por regra) sempre passa pela aprovação
 do admin do mesmo jeito.
 
-## 4. Criar as tabelas
+4. Criar as tabelas
 
 ```bash
 flask --app app init-db
@@ -59,7 +59,7 @@ flask --app app init-db
 (Isso também acontece automaticamente ao rodar `python app.py`, mas o comando acima
 é útil se você estiver usando `flask run` ou rodando as tabelas em outro momento.)
 
-## 5. Criar o primeiro usuário administrador
+5. Criar o primeiro usuário administrador
 
 ```bash
 flask --app app create-admin
@@ -69,7 +69,7 @@ Vai pedir nome, e-mail e senha. Essa conta poderá entrar em **"É administrador
 por aqui"**, no rodapé do formulário de login/cadastro da página inicial, e acessar
 `/admin` — o painel com o registro completo do banco e as estatísticas de uso.
 
-## 6. Rodar o projeto
+6. Rodar o projeto
 
 ```bash
 python app.py
@@ -77,7 +77,7 @@ python app.py
 
 O site sobe em `http://localhost:5000`.
 
-## Como funciona o desbloqueio progressivo
+Como funciona o desbloqueio progressivo?
 
 Todo usuário novo começa apenas com o **TALK** liberado. As demais áreas vão sendo
 destravadas conforme o uso:
@@ -136,7 +136,7 @@ foi o nome dos endpoints no `url_for`: cada rota agora se chama pelo blueprint
 onde mora — `url_for("main.talk")`, `url_for("world.index")`,
 `url_for("admin.dashboard")` e assim por diante.
 
-### O WORLD
+O WORLD
 
 O WORLD tem **uma só implementação**: a cena interativa em PixiJS
 (`static/js/world.js`). A versão antiga, que desenhava a ilha em CSS, foi
@@ -155,15 +155,15 @@ em `world.js`). O que já foi conquistado aparece normal; o que falta aparece
 apagado e pode ser obtido clicando — na ilha ou na lista lateral. A tela se
 atualiza sozinha depois da compra, sem recarregar.
 
-## ⚠️ Sobre o esquema do banco (mudança importante)
+Sobre o esquema do banco (mudança importante)
 
-Esta versão substitui o antigo modelo simples de "3 metas do 1%" por um ciclo
+Esta versão substitui o modelo simples de "3 metas do 1%" por um ciclo
 completo: 1 meta mensal + 4 semanais + 140 diárias (35 por semana, 5 por dia),
 com bloco de metas gerado por IA e aprovado por um admin antes de valer pro
 usuário (ver `models.py`, `services/goal_engine.py`, `services/ai_goals.py`). A tabela antiga
 `goals` continua existindo no código (por segurança), mas não é mais usada.
 
-Como o esquema mudou bastante, se você já tinha um banco `rastro_db` criado
+Como o esquema mudou bastante, se você tinha um banco `rastro_db` criado
 com a versão anterior, o mais simples é recriar as tabelas do zero:
 
 ```sql
@@ -173,7 +173,7 @@ CREATE DATABASE rastro_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 E rodar `flask --app app init-db` e `flask --app app create-admin` de novo.
 
-## Como funciona o novo ciclo de metas (mensal/semanal/diária)
+Como funciona o novo ciclo de metas (mensal/semanal/diária)?
 
 1. Ao terminar o TALK (ou ao atualizar o objetivo em "Atualizar informações"),
    o sistema chama `ai_goals.generate_goal_payload` — tenta a API da Anthropic
@@ -192,7 +192,7 @@ E rodar `flask --app app init-db` e `flask --app app create-admin` de novo.
    solicitado automaticamente pro próximo ciclo (de novo, pendente de
    aprovação).
 
-## Voluntariado / triagem
+Voluntariado / triagem:
 
 `/voluntario` deixa o usuário descrever o que quer conversar. O texto passa
 por `data.classify_ticket_urgency` (baseado em palavras-chave — não é
@@ -202,7 +202,7 @@ mensagem com o número do CVV (188). Os demais viram um `VolunteerTicket` na
 fila, visível e editável em `/admin` (status, universidade parceira,
 voluntário responsável).
 
-## Estatísticas de insatisfação (anônimas)
+Estatísticas de insatisfação (anônimas)
 
 `SatisfactionEntry` guarda só `context` (escola/empresa/cidade/outro),
 `reason_text` e `origin` (`talk` ou `atualizar_info`) — sem `user_id` de
