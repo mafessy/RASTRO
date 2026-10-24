@@ -3,10 +3,11 @@ routes/auth.py — porta de entrada do app.
 
 Landing (boas-vindas), saída e o acesso separado do administrador.
 
-MODO VISITANTE: não existe mais login nem cadastro para o público. Quem
-clica em "Começar" entra direto e ganha um usuário visitante automático
-(ver helpers.current_user). As rotas /login e /cadastro continuam existindo
-só para não quebrar links antigos: elas apenas levam para o site.
+MODO VISITANTE: o login e o cadastro do público estão desativados
+temporariamente. A landing continua mostrando o formulário de entrada, mas
+enviar login/cadastro só exibe um aviso. Quem clica em "Testar sem login"
+entra direto e ganha um usuário visitante automático (ver
+helpers.current_user).
 """
 
 from datetime import datetime
@@ -26,11 +27,17 @@ from backend.models import User, db
 bp = Blueprint("auth", __name__)
 
 
+LOGIN_DISABLED_MESSAGE = (
+    "Essa função foi desativada temporariamente para fins de segurança "
+    "e manutenção do sistema."
+)
+
+
 @bp.route("/")
 def landing():
-    if session.get("user_id"):
-        return redirect(url_for("main.home"))
-    return render_template("auth/landing.html")
+    # sem redirect automático: a landing sempre aparece e a pessoa escolhe
+    # "Testar sem login" (ou tenta entrar e vê o aviso)
+    return render_template("auth/landing.html", tab=request.args.get("tab"))
 
 
 @bp.route("/privacidade")
@@ -40,14 +47,18 @@ def privacidade():
 
 @bp.route("/login", methods=["GET", "POST"])
 def login():
-    # login público foi desativado (modo visitante)
-    return redirect(url_for("main.home"))
+    # login público desativado temporariamente: só mostra o aviso
+    if request.method == "POST":
+        flash(LOGIN_DISABLED_MESSAGE)
+    return redirect(url_for("auth.landing"))
 
 
 @bp.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
-    # cadastro público foi desativado (modo visitante)
-    return redirect(url_for("main.home"))
+    # cadastro público desativado temporariamente: só mostra o aviso
+    if request.method == "POST":
+        flash(LOGIN_DISABLED_MESSAGE)
+    return redirect(url_for("auth.landing", tab="cadastro"))
 
 
 @bp.route("/admin/login", methods=["GET", "POST"])
