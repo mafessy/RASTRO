@@ -154,7 +154,8 @@
 
 
       <!-- ============================================================
-           ENTRADA (modo visitante: sem login nem cadastro)
+           ENTRADA: login / cadastro (desativados por enquanto)
+           + opção de testar sem login
            ============================================================ -->
 
       <section
@@ -166,7 +167,7 @@
 
           {% if messages %}
 
-            <div class="flash-banner">
+            <div class="flash-banner" role="alert">
 
               {% for message in messages %}
 
@@ -183,38 +184,117 @@
         {% endwith %}
 
 
-        <div class="auth-form active">
+        <div class="auth-tabs" role="tablist">
 
-          <a
-            class="primary-btn auth-submit"
-            href="{{ url_for('main.home') }}"
-            style="display:block;text-align:center;text-decoration:none;"
+          <button
+            class="auth-tab {% if tab != 'cadastro' %}active{% endif %}"
+            type="button"
+            role="tab"
+            data-auth-tab="login"
           >
-            Começar
-          </a>
+            Entrar
+          </button>
 
-
-          <a
-            class="admin-hint"
-            href="{{ url_for('auth.admin_login') }}"
+          <button
+            class="auth-tab {% if tab == 'cadastro' %}active{% endif %}"
+            type="button"
+            role="tab"
+            data-auth-tab="cadastro"
           >
-            É administrador? Entre por aqui
-          </a>
-
-          <a
-            class="admin-hint volunteer-link"
-            href="{{ url_for('volunteer.login') }}"
-          >
-            É voluntário? Entre por aqui
-          </a>
-
-
-          <p class="terms-notice">
-            Ao continuar, você concorda com a
-            <a href="{{ url_for('auth.privacidade') }}" target="_blank" rel="noopener">Política de Privacidade</a>.
-          </p>
+            Criar conta
+          </button>
 
         </div>
+
+
+        <!-- LOGIN -->
+
+        <form
+          class="auth-form {% if tab != 'cadastro' %}active{% endif %}"
+          id="auth-form-login"
+          method="post"
+          action="{{ url_for('auth.login') }}"
+        >
+
+          <label>
+            E-mail
+            <input type="email" name="email" placeholder="seu@email.com" autocomplete="email">
+          </label>
+
+          <label>
+            Senha
+            <input type="password" name="password" placeholder="Sua senha" autocomplete="current-password">
+          </label>
+
+          <button class="primary-btn auth-submit" type="submit">
+            Entrar
+          </button>
+
+        </form>
+
+
+        <!-- CADASTRO -->
+
+        <form
+          class="auth-form {% if tab == 'cadastro' %}active{% endif %}"
+          id="auth-form-cadastro"
+          method="post"
+          action="{{ url_for('auth.cadastro') }}"
+        >
+
+          <label>
+            Nome
+            <input type="text" name="name" placeholder="Como quer ser chamado(a)" autocomplete="name">
+          </label>
+
+          <label>
+            E-mail
+            <input type="email" name="email" placeholder="seu@email.com" autocomplete="email">
+          </label>
+
+          <label>
+            Senha
+            <input type="password" name="password" placeholder="Crie uma senha" autocomplete="new-password">
+          </label>
+
+          <button class="primary-btn auth-submit" type="submit">
+            Criar conta
+          </button>
+
+        </form>
+
+
+        <!-- TESTAR SEM LOGIN -->
+
+        <div class="auth-divider"><span>ou</span></div>
+
+        <a
+          class="auth-guest"
+          href="{{ url_for('main.home') }}"
+        >
+          Testar sem login
+        </a>
+
+
+        <a
+          class="admin-hint"
+          href="{{ url_for('auth.admin_login') }}"
+        >
+          É administrador? Entre por aqui
+        </a>
+
+        <a
+          class="admin-hint volunteer-link"
+          href="{{ url_for('volunteer.login') }}"
+        >
+          É voluntário? Entre por aqui
+        </a>
+
+
+        <p class="terms-notice">
+          Ao continuar, você concorda com a
+          <a href="{{ url_for('auth.privacidade') }}" target="_blank" rel="noopener">Política de Privacidade</a>.
+        </p>
 
       </section>
 
@@ -463,6 +543,23 @@
        ============================================================ -->
 
   <script src="{{ url_for('static', filename='js/estrela.js') }}"></script>
+
+  <!-- abas Entrar / Criar conta -->
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll("[data-auth-tab]");
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          var target = tab.getAttribute("data-auth-tab");
+          tabs.forEach(function (t) {
+            t.classList.toggle("active", t === tab);
+          });
+          document.getElementById("auth-form-login").classList.toggle("active", target === "login");
+          document.getElementById("auth-form-cadastro").classList.toggle("active", target === "cadastro");
+        });
+      });
+    })();
+  </script>
 
 
 
