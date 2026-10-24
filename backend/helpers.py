@@ -4,31 +4,71 @@ helpers.py — utilidades compartilhadas por todos os blueprints.
 Sessão (do usuário e do voluntário), decorators de acesso e leitura rápida
 do progresso. Este módulo só depende de flask + models, então nenhum
 blueprint precisa importar app.py — o que evita import circular.
+
+MODO VISITANTE: o site não tem mais login nem cadastro para o público.
+Quem entra pela primeira vez ganha, automaticamente, um usuário "Visitante"
+(guardado no banco, ligado ao navegador por um cookie de sessão longo).
+O administrador e o voluntário continuam com login próprio.
 """
 
 import re
+import secrets
+import uuid
 from functools import wraps
 
 from flask import redirect, session, url_for
 
-from backend.models import MonthlyCycle, User, Volunteer, db
+from backend.models import MonthlyCycle, User, Volunteer, WorldItem, db
+
+# e-mail fictício dos visitantes (precisa ser único no banco, não é real)
+GUEST_EMAIL_DOMAIN = "visitante.rastro.local"
 
 
 # ---------------- sessão ----------------
 
-def current_user():
-    """Usuário logado na sessão atual, ou None."""
+def _create_guest():
+    """Cria um usuário visitante já com a marca inicial do WORLD."""
+    user = User(
+        name="Visitante",
+        email=f"{uuid.uuid4().hex}@{GUEST_EMAIL_DOMAIN}",
+    )
+    # ninguém faz login com essa senha: ela só existe porque a coluna é obrigatória
+    user.set_password(secrets.token_urlsafe(32))
+    db.session.add(user)
+    db.session.flush()  # gera user.id antes de criar dados relacionados
+
+    # marca do primeiro passo, já "de fábrica" (igual ao antigo cadastro)
+    db.session.add(WorldItem(user_id=user.id, cost=0))
+    db.session.commit()
+    return user
+
+
+def current_user(create=True):
+    """Usuário da sessão atual.
+
+    Se a pessoa ainda não tem sessão (ou o usuário dela não existe mais),
+    cria um visitante novo, a menos que create=False (usado nas áreas de
+    administrador, que nunca devem criar visitantes).
+    """
     user_id = session.get("user_id")
-    if not user_id:
+    user = db.session.get(User, user_id) if user_id else None
+    if user is not None:
+        return user
+    if not create:
         return None
-    return db.session.get(User, user_id)
+
+    user = _create_guest()
+    session["user_id"] = user.id
+    session.permanent = True  # lembra do visitante por vários meses
+    return user
 
 
 def login_required(view):
+    """Antes exigia login. Agora só garante que existe um usuário (visitante)."""
+
     @wraps(view)
     def wrapped(*args, **kwargs):
-        if not session.get("user_id"):
-            return redirect(url_for("auth.landing", tab="login"))
+        current_user()
         return view(*args, **kwargs)
 
     return wrapped
@@ -37,7 +77,7 @@ def login_required(view):
 def admin_required(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
-        user = current_user()
+        user = current_user(create=False)
         if not user or not user.is_admin:
             return redirect(url_for("auth.admin_login"))
         return view(*args, **kwargs)
