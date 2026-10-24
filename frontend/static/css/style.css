@@ -1408,11 +1408,15 @@ body{
 
 .mobile-logout{
   margin-left:auto;
-  color:#8aa2bf;
-  font-size:11px;
+  color:#cfe0f2;
+  font-size:13px;
+  font-weight:600;
   text-decoration:none;
   position:absolute;
-  right:16px
+  right:16px;
+  padding:6px 12px;
+  border:1px solid rgba(79,224,179,.45);
+  border-radius:99px
 }
 
 .dash-card.locked,
@@ -1997,14 +2001,15 @@ body{
 
 .sidebar-logout{
   display:inline-block;
-  margin-top:10px;
-  font-size:8.5px;
+  margin-top:12px;
+  font-size:11px;
+  font-weight:600;
   letter-spacing:.5px;
-  color:#8aa2bf;
+  color:#cfe0f2;
   text-decoration:none;
-  border:1px solid rgba(255,255,255,.1);
+  border:1px solid rgba(79,224,179,.45);
   border-radius:99px;
-  padding:5px 12px;
+  padding:7px 18px;
   transition:.2s
 }
 
