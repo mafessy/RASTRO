@@ -3,11 +3,10 @@ routes/auth.py — porta de entrada do app.
 
 Landing (boas-vindas), saída e o acesso separado do administrador.
 
-MODO VISITANTE: o login e o cadastro do público estão desativados
-temporariamente. A landing continua mostrando o formulário de entrada, mas
-enviar login/cadastro só exibe um aviso. Quem clica em "Testar sem login"
-entra direto e ganha um usuário visitante automático (ver
-helpers.current_user).
+MODO VISITANTE: não existe mais login nem cadastro para o público. Quem
+clica em "Começar" entra direto e ganha um usuário visitante automático
+(ver helpers.current_user). As rotas /login e /cadastro continuam existindo
+só para não quebrar links antigos: elas apenas levam para o site.
 """
 
 from datetime import datetime
@@ -22,22 +21,19 @@ from flask import (
     url_for,
 )
 
+from backend.helpers import current_user
 from backend.models import User, db
 
 bp = Blueprint("auth", __name__)
 
 
-LOGIN_DISABLED_MESSAGE = (
-    "Essa função foi desativada temporariamente para fins de segurança "
-    "e manutenção do sistema."
-)
-
-
 @bp.route("/")
 def landing():
-    # sem redirect automático: a landing sempre aparece e a pessoa escolhe
-    # "Testar sem login" (ou tenta entrar e vê o aviso)
-    return render_template("auth/landing.html", tab=request.args.get("tab"))
+    # visitante que volta ao site vai direto para a home; quem acabou de
+    # clicar em "Sair" (?sair=1) vê a tela inicial
+    if session.get("user_id") and not request.args.get("sair"):
+        return redirect(url_for("main.home"))
+    return render_template("auth/landing.html")
 
 
 @bp.route("/privacidade")
@@ -47,18 +43,14 @@ def privacidade():
 
 @bp.route("/login", methods=["GET", "POST"])
 def login():
-    # login público desativado temporariamente: só mostra o aviso
-    if request.method == "POST":
-        flash(LOGIN_DISABLED_MESSAGE)
-    return redirect(url_for("auth.landing"))
+    # login público foi desativado (modo visitante)
+    return redirect(url_for("main.home"))
 
 
 @bp.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
-    # cadastro público desativado temporariamente: só mostra o aviso
-    if request.method == "POST":
-        flash(LOGIN_DISABLED_MESSAGE)
-    return redirect(url_for("auth.landing", tab="cadastro"))
+    # cadastro público foi desativado (modo visitante)
+    return redirect(url_for("main.home"))
 
 
 @bp.route("/admin/login", methods=["GET", "POST"])
@@ -82,5 +74,15 @@ def admin_login():
 
 @bp.route("/logout")
 def logout():
-    session.clear()
-    return redirect(url_for("auth.landing"))
+    """Botão "Sair" do menu.
+
+    Administrador: encerra a sessão de verdade.
+    Visitante: volta para a tela inicial, mas o navegador continua lembrando
+    dele; ao clicar em "Começar como visitante" ele retoma o mesmo progresso.
+    (Se a sessão fosse apagada, o progresso do visitante ficaria inacessível.)
+    """
+    user = current_user(create=False)
+    if user is not None and user.is_admin:
+        session.clear()
+        return redirect(url_for("auth.landing"))
+    return redirect(url_for("auth.landing", sair=1))
