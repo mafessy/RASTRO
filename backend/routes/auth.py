@@ -1,8 +1,12 @@
 """
 routes/auth.py — porta de entrada do app.
 
-Landing (login/cadastro), criação de conta, saída e o acesso separado do
-administrador. Tudo que vem antes de existir uma sessão de usuário.
+Landing (boas-vindas), saída e o acesso separado do administrador.
+
+MODO VISITANTE: não existe mais login nem cadastro para o público. Quem
+clica em "Começar" entra direto e ganha um usuário visitante automático
+(ver helpers.current_user). As rotas /login e /cadastro continuam existindo
+só para não quebrar links antigos: elas apenas levam para o site.
 """
 
 from datetime import datetime
@@ -17,7 +21,7 @@ from flask import (
     url_for,
 )
 
-from backend.models import User, WorldItem, db
+from backend.models import User, db
 
 bp = Blueprint("auth", __name__)
 
@@ -34,49 +38,15 @@ def privacidade():
     return render_template("auth/privacidade.html")
 
 
-@bp.post("/login")
+@bp.route("/login", methods=["GET", "POST"])
 def login():
-    email = (request.form.get("email") or "").strip().lower()
-    password = request.form.get("password") or ""
-
-    user = User.query.filter_by(email=email).first()
-    if not user or not user.check_password(password):
-        flash("E-mail ou senha inválidos.")
-        return redirect(url_for("auth.landing", tab="login"))
-
-    session["user_id"] = user.id
-    user.last_login_at = datetime.utcnow()
-    db.session.commit()
+    # login público foi desativado (modo visitante)
     return redirect(url_for("main.home"))
 
 
-@bp.post("/cadastro")
+@bp.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
-    name = (request.form.get("name") or "").strip()
-    email = (request.form.get("email") or "").strip().lower()
-    password = request.form.get("password") or ""
-
-    if not name or not email or len(password) < 6:
-        flash("Preencha nome, e-mail e uma senha com pelo menos 6 caracteres.")
-        return redirect(url_for("auth.landing", tab="cadastro"))
-
-    if User.query.filter_by(email=email).first():
-        flash("Já existe uma conta com esse e-mail.")
-        return redirect(url_for("auth.landing", tab="cadastro"))
-
-    user = User(name=name, email=email)
-    user.set_password(password)
-    db.session.add(user)
-    db.session.flush()  # gera user.id antes de criar dados relacionados
-
-    # marca do primeiro passo, já "de fábrica" — espelha o protótipo original
-    db.session.add(WorldItem(user_id=user.id, cost=0))
-    db.session.commit()
-
-    session["user_id"] = user.id
-    # sinaliza pra próxima página renderizada mostrar o modal "Conta criada!"
-    # (consumido uma única vez pelo context_processor em app.py)
-    session["just_registered"] = True
+    # cadastro público foi desativado (modo visitante)
     return redirect(url_for("main.home"))
 
 
