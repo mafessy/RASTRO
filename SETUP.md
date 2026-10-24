@@ -103,7 +103,7 @@ models.py          tabelas (SQLAlchemy)
 data.py            conteúdo fixo: marcas do WORLD, benefícios, textos, regras
 
 routes/            um blueprint por área — os endpoints são "área.view"
-  auth.py            landing, login, cadastro, logout, entrada do admin
+  auth.py            landing (login/cadastro desativados + "Testar sem login"), logout, entrada do admin
   main.py            home, TALK, 1%, SECRET, PERFIL, atualizar informações e APIs
   world.py           WORLD: a ilha, o Mundo Real e /api/world/*
   admin.py           painel /admin
