@@ -41,6 +41,7 @@
 
       <div class="sidebar-bottom">
         <div class="sidebar-note">pequenos passos<br><strong>deixam rastros.</strong></div>
+        <a href="{{ url_for('auth.logout') }}" class="sidebar-logout">Sair</a>
       </div>
     </aside>
 
@@ -49,6 +50,7 @@
         <a href="{{ url_for('main.home') }}" class="mobile-brand">
           <img src="{{ url_for('static', filename='img/logo-rastro.png') }}" alt="Rastro">
         </a>
+        <a href="{{ url_for('auth.logout') }}" class="mobile-logout">Sair</a>
       </header>
 
       <main class="content">
