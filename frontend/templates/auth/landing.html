@@ -183,20 +183,6 @@
         {% endwith %}
 
 
-        <a
-          class="primary-btn auth-submit"
-          href="{{ url_for('main.home') }}"
-          style="display:block;text-align:center;text-decoration:none;"
-        >
-          Começar como visitante
-        </a>
-
-        <p class="terms-notice" style="text-align:center;margin:8px 0 18px;">
-          Ao continuar como visitante, você concorda com a
-          <a href="{{ url_for('auth.privacidade') }}" target="_blank" rel="noopener">Política de Privacidade</a>.
-        </p>
-
-
         <div
           class="flash-banner"
           id="auth-notice"
@@ -204,8 +190,9 @@
           style="display:none;"
         >
           <p>
-            O acesso com e-mail e senha ainda não está disponível.
-            Use o botão <strong>Começar como visitante</strong> para entrar.
+            O login e a criação de contas estão temporariamente indisponíveis.
+            Para explorar e testar as funcionalidades da plataforma, clique em
+            <strong>Começar como visitante</strong>.
           </p>
         </div>
 
@@ -273,25 +260,6 @@
           </button>
 
 
-          <a
-            class="admin-hint"
-            href="{{ url_for('auth.admin_login') }}"
-          >
-            É administrador? Entre por aqui
-          </a>
-          <a
-            class="admin-hint volunteer-link"
-            href="{{ url_for('volunteer.login') }}"
-          >
-            É voluntário? Entre por aqui
-          </a>
-
-
-          <p class="terms-notice">
-            Ao criar conta e realizar o login, você concorda com a
-            <a href="{{ url_for('auth.privacidade') }}" target="_blank" rel="noopener">Política de Privacidade</a>.
-          </p>
-
         </form>
 
 
@@ -349,27 +317,40 @@
           </button>
 
 
-          <a
-            class="admin-hint"
-            href="{{ url_for('auth.admin_login') }}"
-          >
-            É administrador? Entre por aqui
-          </a>
-
-          <a
-            class="admin-hint volunteer-link"
-            href="{{ url_for('volunteer.login') }}"
-          >
-            É voluntário? Entre por aqui
-          </a>
-
-
-          <p class="terms-notice">
-            Ao criar conta e realizar o login, você concorda com a
-            <a href="{{ url_for('auth.privacidade') }}" target="_blank" rel="noopener">Política de Privacidade</a>.
-          </p>
-
         </form>
+
+
+        <!-- ENTRAR COMO VISITANTE + LINKS + PRIVACIDADE -->
+
+        <div class="auth-divider"><span>ou</span></div>
+
+        <a
+          class="auth-guest"
+          href="{{ url_for('main.home') }}"
+        >
+          Começar como visitante
+        </a>
+
+
+        <a
+          class="admin-hint"
+          href="{{ url_for('auth.admin_login') }}"
+        >
+          É administrador? Entre por aqui
+        </a>
+
+        <a
+          class="admin-hint volunteer-link"
+          href="{{ url_for('volunteer.login') }}"
+        >
+          É voluntário? Entre por aqui
+        </a>
+
+
+        <p class="terms-notice">
+          Ao acessar a plataforma, você concorda com a
+          <a href="{{ url_for('auth.privacidade') }}" target="_blank" rel="noopener">Política de Privacidade</a>.
+        </p>
 
       </section>
 
