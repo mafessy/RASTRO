@@ -8,6 +8,7 @@ fica escrita no código.
 """
 
 import os
+from datetime import timedelta
 
 
 def _database_uri():
@@ -24,6 +25,10 @@ def _database_uri():
 
 class Config:
     SECRET_KEY = os.environ.get("RASTRO_SECRET_KEY", "rastro-dev-secret")
+
+    # modo visitante: o navegador lembra do visitante por ~1 ano
+    PERMANENT_SESSION_LIFETIME = timedelta(days=365)
+    SESSION_COOKIE_SAMESITE = "Lax"
 
     SQLALCHEMY_DATABASE_URI = _database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
