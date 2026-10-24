@@ -1787,6 +1787,45 @@ body{
 
 .admin-hint:hover{color:#93a2bf}
 
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:16px 0 12px;
+  color:#5c6c88;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.5px
+}
+
+.auth-divider::before,
+.auth-divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--border)
+}
+
+.auth-guest{
+  display:block;
+  width:100%;
+  box-sizing:border-box;
+  text-align:center;
+  text-decoration:none;
+  padding:12px;
+  font:600 12px Inter,sans-serif;
+  color:#cfe9e1;
+  background:transparent;
+  border:1px solid rgba(79,224,179,.4);
+  border-radius:10px;
+  transition:.2s
+}
+
+.auth-guest:hover{
+  background:rgba(79,224,179,.1);
+  border-color:rgba(79,224,179,.7)
+}
+
 @media(max-width:900px){
 
   .landing-main{
