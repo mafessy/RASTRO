@@ -154,7 +154,7 @@
 
 
       <!-- ============================================================
-           LOGIN / CADASTRO
+           ENTRADA (modo visitante: sem login nem cadastro)
            ============================================================ -->
 
       <section
@@ -183,166 +183,38 @@
         {% endwith %}
 
 
-        <div class="auth-tabs">
+        <div class="auth-form active">
 
-          <button
-            type="button"
-            class="auth-tab"
-            data-tab="login"
+          <a
+            class="primary-btn auth-submit"
+            href="{{ url_for('main.home') }}"
+            style="display:block;text-align:center;text-decoration:none;"
           >
-            Entrar
-          </button>
+            Começar
+          </a>
 
 
-          <button
-            type="button"
-            class="auth-tab"
-            data-tab="cadastro"
+          <a
+            class="admin-hint"
+            href="{{ url_for('auth.admin_login') }}"
           >
-            Criar conta
-          </button>
+            É administrador? Entre por aqui
+          </a>
+
+          <a
+            class="admin-hint volunteer-link"
+            href="{{ url_for('volunteer.login') }}"
+          >
+            É voluntário? Entre por aqui
+          </a>
+
+
+          <p class="terms-notice">
+            Ao continuar, você concorda com a
+            <a href="{{ url_for('auth.privacidade') }}" target="_blank" rel="noopener">Política de Privacidade</a>.
+          </p>
 
         </div>
-
-
-        <!-- LOGIN -->
-
-        <form
-          class="auth-form"
-          id="form-login"
-          method="post"
-          action="{{ url_for('auth.login') }}"
-        >
-
-          <label>
-            E-mail
-
-            <input
-              type="email"
-              name="email"
-              required
-              autocomplete="email"
-            >
-          </label>
-
-
-          <label>
-            Senha
-
-            <input
-              type="password"
-              name="password"
-              required
-              autocomplete="current-password"
-            >
-          </label>
-
-
-          <button
-            type="submit"
-            class="primary-btn auth-submit"
-          >
-            Concluir
-          </button>
-
-
-          <a
-            class="admin-hint"
-            href="{{ url_for('auth.admin_login') }}"
-          >
-            É administrador? Entre por aqui
-          </a>
-          <a
-            class="admin-hint volunteer-link"
-            href="{{ url_for('volunteer.login') }}"
-          >
-            É voluntário? Entre por aqui
-          </a>
-
-
-          <p class="terms-notice">
-            Ao criar conta e realizar o login, você concorda com a
-            <a href="{{ url_for('auth.privacidade') }}" target="_blank" rel="noopener">Política de Privacidade</a>.
-          </p>
-
-        </form>
-
-
-        <!-- CADASTRO -->
-
-        <form
-          class="auth-form"
-          id="form-cadastro"
-          method="post"
-          action="{{ url_for('auth.cadastro') }}"
-        >
-
-          <label>
-            Nome
-
-            <input
-              type="text"
-              name="name"
-              required
-              autocomplete="name"
-            >
-          </label>
-
-
-          <label>
-            E-mail
-
-            <input
-              type="email"
-              name="email"
-              required
-              autocomplete="email"
-            >
-          </label>
-
-
-          <label>
-            Senha
-
-            <input
-              type="password"
-              name="password"
-              required
-              minlength="6"
-              autocomplete="new-password"
-            >
-          </label>
-
-
-          <button
-            type="submit"
-            class="primary-btn auth-submit"
-          >
-            Concluir
-          </button>
-
-
-          <a
-            class="admin-hint"
-            href="{{ url_for('auth.admin_login') }}"
-          >
-            É administrador? Entre por aqui
-          </a>
-
-          <a
-            class="admin-hint volunteer-link"
-            href="{{ url_for('volunteer.login') }}"
-          >
-            É voluntário? Entre por aqui
-          </a>
-
-
-          <p class="terms-notice">
-            Ao criar conta e realizar o login, você concorda com a
-            <a href="{{ url_for('auth.privacidade') }}" target="_blank" rel="noopener">Política de Privacidade</a>.
-          </p>
-
-        </form>
 
       </section>
 
@@ -593,57 +465,6 @@
   <script src="{{ url_for('static', filename='js/estrela.js') }}"></script>
 
 
-  <script>
-    (function () {
-
-      const tabs = document.querySelectorAll(".auth-tab");
-
-      const forms = {
-        login: document.getElementById("form-login"),
-        cadastro: document.getElementById("form-cadastro")
-      };
-
-
-      function activate(tab) {
-
-        tabs.forEach((t) =>
-          t.classList.toggle(
-            "active",
-            t.dataset.tab === tab
-          )
-        );
-
-
-        Object.entries(forms).forEach(([key, form]) =>
-          form.classList.toggle(
-            "active",
-            key === tab
-          )
-        );
-
-      }
-
-
-      tabs.forEach((t) =>
-        t.addEventListener(
-          "click",
-          () => activate(t.dataset.tab)
-        )
-      );
-
-
-      const requested =
-        new URLSearchParams(window.location.search).get("tab");
-
-
-      activate(
-        requested === "cadastro"
-          ? "cadastro"
-          : "login"
-      );
-
-    })();
-  </script>
 
 
   <!-- JavaScript do sistema de acessibilidade -->
