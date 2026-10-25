@@ -29,10 +29,8 @@ bp = Blueprint("auth", __name__)
 
 @bp.route("/")
 def landing():
-    # visitante que volta ao site vai direto para a home; quem acabou de
-    # clicar em "Sair" (?sair=1) vê a tela inicial
-    if session.get("user_id") and not request.args.get("sair"):
-        return redirect(url_for("main.home"))
+    # a tela inicial aparece sempre; quem já é visitante retoma o progresso
+    # ao clicar em "Começar como visitante"
     return render_template("auth/landing.html")
 
 
@@ -85,4 +83,4 @@ def logout():
     if user is not None and user.is_admin:
         session.clear()
         return redirect(url_for("auth.landing"))
-    return redirect(url_for("auth.landing", sair=1))
+    return redirect(url_for("auth.landing"))
