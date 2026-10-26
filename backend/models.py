@@ -258,6 +258,26 @@ class DailyGoal(db.Model):
     done_at = db.Column(db.DateTime)
 
 
+# ==================== DESAFIO DOS 7 DIAS (aba 1%) ====================
+
+class OnePctMission(db.Model):
+    """Uma missão do desafio dos 7 dias que o usuário marcou como concluída.
+    O texto das missões é fixo (data.ONEPCT_CHALLENGE); aqui só guardamos
+    (usuário, dia, posição). Existir a linha = concluída; desmarcar apaga a
+    linha. Não mexe em pontos nem no ciclo mensal."""
+
+    __tablename__ = "onepct_missions"
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "day", "position", name="uq_onepct_mission"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    day = db.Column(db.Integer, nullable=False)  # 1..7
+    position = db.Column(db.Integer, nullable=False)  # 1..5
+    done_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 # ==================== VOLUNTARIADO / TRIAGEM ====================
 
 class VolunteerTicket(db.Model):
