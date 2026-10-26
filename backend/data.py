@@ -447,26 +447,75 @@ def _daily_pool(objective, barrier):
     return pool
 
 
+# Metas diárias fixas do 1%: 7 dias x 5 metas = 35 por semana (dia 1 = Disciplina,
+# dia 2 = Conhecimento, dia 3 = Corpo e energia, dia 4 = Mentalidade,
+# dia 5 = Organização, dia 6 = Bem-estar, dia 7 = Evolução).
+DAILY_MISSIONS_BY_DAY = [
+    [
+        "Arrumar a cama ao acordar",
+        "Beber um copo de água",
+        "Organizar a mesa por 2 minutos",
+        "Fazer uma tarefa que está adiando",
+        "Ficar 5 minutos longe do celular",
+    ],
+    [
+        "Ler 2 páginas de um livro",
+        "Aprender uma palavra nova",
+        "Pesquisar algo que sempre quis entender",
+        "Assistir a um vídeo educativo de 3 minutos",
+        "Escrever uma coisa nova que aprendeu hoje",
+    ],
+    [
+        "Fazer 10 agachamentos no seu ritmo",
+        "Alongar o corpo por 2 minutos",
+        "Caminhar pela casa durante 3 minutos",
+        "Fazer 10 respirações lentas e profundas",
+        "Levantar e se movimentar após ficar sentado",
+    ],
+    [
+        "Escrever 3 coisas pelas quais é grato",
+        "Identificar algo que deseja melhorar em si",
+        "Escrever uma pequena vitória do dia",
+        "Passar 2 minutos em silêncio, sem telas",
+        "Transformar um pensamento negativo em uma ação possível",
+    ],
+    [
+        "Jogar fora ou reciclar 3 itens desnecessários",
+        "Organizar uma pequena gaveta ou prateleira",
+        "Escrever as 3 prioridades de amanhã",
+        "Deixar separado algo que usará amanhã",
+        "Apagar 5 arquivos ou fotos desnecessários do celular",
+    ],
+    [
+        "Fazer algo de que gosta por 5 minutos",
+        "Enviar uma mensagem positiva para alguém",
+        "Fazer uma pausa de 5 minutos sem telas",
+        "Ouvir uma música prestando atenção nela",
+        "Reconhecer uma qualidade sua e escrevê-la",
+    ],
+    [
+        "Revisar uma meta pessoal",
+        "Escrever algo que fez bem nesta semana",
+        "Identificar um hábito que deseja abandonar",
+        "Escolher um hábito pequeno para manter na próxima semana",
+        "Definir uma meta simples para os próximos 7 dias",
+    ],
+]
+
+
+def fixed_daily_weeks():
+    """As 4 semanas de metas diárias (35 textos cada), sempre com os mesmos textos."""
+    week = [text for day in DAILY_MISSIONS_BY_DAY for text in day]
+    return [list(week) for _ in range(WEEKLY_GOALS_PER_CYCLE_FALLBACK)]
+
+
 def build_full_cycle(objective, barrier):
     """Monta o payload de um ciclo completo (mensal + 4 semanais + 140 diárias,
     35 por semana / 5 por dia), no mesmo formato usado pelos rascunhos gerados
     por IA — pra admin_dashboard poder aprovar os dois do mesmo jeito."""
     monthly = MONTHLY_GOAL_TEMPLATES.get(objective, MONTHLY_GOAL_TEMPLATES["projeto pessoal"])
     weekly = WEEKLY_GOAL_TEMPLATES.get(barrier, WEEKLY_GOAL_TEMPLATES["não sei por onde começar"])
-    pool = _daily_pool(objective, barrier)
-
-    daily_weeks = []
-    for week_index in range(WEEKLY_GOALS_PER_CYCLE_FALLBACK):
-        week_texts = []
-        for day in range(7):
-            for slot in range(5):
-                i = (week_index * 35) + (day * 5) + slot
-                base_text = pool[i % len(pool)]
-                # pequena variação pra não repetir o texto idêntico dentro da semana
-                cycle_pass = i // len(pool)
-                text = base_text if cycle_pass == 0 else f"{base_text} (dia {day + 1})"
-                week_texts.append(text)
-        daily_weeks.append(week_texts)
+    daily_weeks = fixed_daily_weeks()
 
     return {"monthly": monthly, "weekly": list(weekly), "daily": daily_weeks}
 
@@ -683,103 +732,5 @@ WORLD_REAL_PLACES = [
         "interests": ["livrarias", "gastronomia", "cultura"],
         "lat": -19.9360, "lng": -43.9364,
         "description": "Livraria e café para quem gosta de literatura e encontros culturais.",
-    },
-]
-
-
-# ==================== DESAFIO DOS 7 DIAS (aba 1%) ====================
-# Conteúdo fixo: 7 dias x 5 missões = 35 missões. Cada missão é identificada
-# por (dia, posição), ambos começando em 1 — é essa dupla que o banco guarda
-# (models.OnePctMission) quando o usuário marca uma missão como concluída.
-ONEPCT_CHALLENGE_DAYS = 7
-ONEPCT_MISSIONS_PER_DAY = 5
-ONEPCT_CHALLENGE_TOTAL = ONEPCT_CHALLENGE_DAYS * ONEPCT_MISSIONS_PER_DAY
-
-ONEPCT_DAY_MESSAGE = (
-    "Você concluiu as 5 missões de hoje. Pequenas ações, repetidas com "
-    "consistência, constroem grandes mudanças."
-)
-ONEPCT_FINAL_MESSAGE = (
-    "Desafio concluído! Você dedicou tempo à sua evolução durante os últimos "
-    "7 dias. Continue construindo sua melhor versão, um passo de cada vez."
-)
-
-ONEPCT_CHALLENGE = [
-    {
-        "day": 1, "title": "Disciplina", "emoji": "🧭",
-        "subtitle": "Pequenos compromissos que treinam a constância.",
-        "missions": [
-            "Arrumar a cama ao acordar",
-            "Beber um copo de água",
-            "Organizar a mesa por 2 minutos",
-            "Fazer uma tarefa que está adiando",
-            "Ficar 5 minutos longe do celular",
-        ],
-    },
-    {
-        "day": 2, "title": "Conhecimento", "emoji": "📚",
-        "subtitle": "Aprender um pouco hoje já muda o amanhã.",
-        "missions": [
-            "Ler 2 páginas de um livro",
-            "Aprender uma palavra nova",
-            "Pesquisar algo que sempre quis entender",
-            "Assistir a um vídeo educativo de 3 minutos",
-            "Escrever uma coisa nova que aprendeu hoje",
-        ],
-    },
-    {
-        "day": 3, "title": "Corpo e energia", "emoji": "⚡",
-        "subtitle": "Movimento leve, no seu ritmo.",
-        "missions": [
-            "Fazer 10 agachamentos no seu ritmo",
-            "Alongar o corpo por 2 minutos",
-            "Caminhar pela casa durante 3 minutos",
-            "Fazer 10 respirações lentas e profundas",
-            "Levantar e se movimentar após ficar sentado",
-        ],
-    },
-    {
-        "day": 4, "title": "Mentalidade", "emoji": "🧠",
-        "subtitle": "Olhar para dentro com gentileza.",
-        "missions": [
-            "Escrever 3 coisas pelas quais é grato",
-            "Identificar algo que deseja melhorar em si",
-            "Escrever uma pequena vitória do dia",
-            "Passar 2 minutos em silêncio, sem telas",
-            "Transformar um pensamento negativo em uma ação possível",
-        ],
-    },
-    {
-        "day": 5, "title": "Organização", "emoji": "🗂️",
-        "subtitle": "Menos bagunça, mais clareza.",
-        "missions": [
-            "Jogar fora ou reciclar 3 itens desnecessários",
-            "Organizar uma pequena gaveta ou prateleira",
-            "Escrever as 3 prioridades de amanhã",
-            "Deixar separado algo que usará amanhã",
-            "Apagar 5 arquivos ou fotos desnecessários do celular",
-        ],
-    },
-    {
-        "day": 6, "title": "Bem-estar", "emoji": "🌿",
-        "subtitle": "Cuidar de você também é progresso.",
-        "missions": [
-            "Fazer algo de que gosta por 5 minutos",
-            "Enviar uma mensagem positiva para alguém",
-            "Fazer uma pausa de 5 minutos sem telas",
-            "Ouvir uma música prestando atenção nela",
-            "Reconhecer uma qualidade sua e escrevê-la",
-        ],
-    },
-    {
-        "day": 7, "title": "Evolução", "emoji": "🌱",
-        "subtitle": "Olhe para trás e escolha o próximo passo.",
-        "missions": [
-            "Revisar uma meta pessoal",
-            "Escrever algo que fez bem nesta semana",
-            "Identificar um hábito que deseja abandonar",
-            "Escolher um hábito pequeno para manter na próxima semana",
-            "Definir uma meta simples para os próximos 7 dias",
-        ],
     },
 ]
