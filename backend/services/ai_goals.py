@@ -1,4 +1,4 @@
-RASTRO — geração de blocos de metas (mensal + 4 semanais + 140 diárias) via IA.
+"""RASTRO — geração de blocos de metas (mensal + 4 semanais + 140 diárias) via IA.
 
 Tenta usar a API da Anthropic (variável de ambiente ANTHROPIC_API_KEY) pra
 gerar um bloco personalizado a partir do objetivo/barreira/padrão detectados
