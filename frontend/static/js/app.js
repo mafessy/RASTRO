@@ -225,152 +225,32 @@ const RastroCycle = {
     const list = document.querySelectorAll(".goal[data-kind]");
     if (!list.length) return;
 
-    async function toggle(item) {
-      if (item.classList.contains("locked-card")) return;
-      const kind = item.dataset.kind;
-      const id = item.dataset.id;
-      item.style.pointerEvents = "none";
+    // progresso salvo só no navegador (sem banco de dados)
+    const KEY = "rastro_desafio_7dias";
+    function loadSaved() {
       try {
-        const res = await fetch("/api/goals/toggle", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ kind, id }),
-        });
-        const data = await res.json();
-        if (data.error) {
-          item.style.pointerEvents = "";
-          return;
-        }
-        // o desbloqueio de novas semanas/dias muda a estrutura da página,
-        // então recarregamos pra refletir o estado real vindo do servidor
-        window.location.reload();
-      } catch (err) {
-        item.style.pointerEvents = "";
-      }
+        const raw = JSON.parse(localStorage.getItem(KEY) || "[]");
+        return Array.isArray(raw) ? raw : [];
+      } catch (e) { return []; }
+    }
+    function save() {
+      const list = [];
+      root.querySelectorAll(".mission.done").forEach((m) => list.push(`${m.dataset.day}-${m.dataset.pos}`));
+      try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) { showError(); }
     }
 
-    list.forEach((item) => {
-      item.addEventListener("click", () => toggle(item));
-      item.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          toggle(item);
-        }
-      });
-    });
-  },
-};
-
-/* ---------------- 1%: abas "Desafio dos 7 dias" / "Meu ciclo" ---------------- */
-const RastroOnepctTabs = {
-  init() {
-    const tabs = document.querySelectorAll(".onepct-tab");
-    if (!tabs.length) return;
-
-    const show = (name) => {
-      tabs.forEach((tab) => {
-        const active = tab.dataset.pane === name;
-        tab.classList.toggle("active", active);
-        tab.setAttribute("aria-selected", active ? "true" : "false");
-      });
-      document.querySelectorAll(".onepct-pane").forEach((pane) => {
-        pane.hidden = pane.id !== `pane-${name}`;
-      });
-      try { localStorage.setItem("rastro_onepct_tab", name); } catch (e) { /* só preferência visual */ }
-    };
-
-    tabs.forEach((tab) => tab.addEventListener("click", () => show(tab.dataset.pane)));
-
-    let saved = null;
-    try { saved = localStorage.getItem("rastro_onepct_tab"); } catch (e) { /* ignora */ }
-    if (saved === "ciclo" || saved === "desafio") show(saved);
-  },
-};
-
-/* ---------------- 1%: desafio dos 7 dias (5 missões por dia) ---------------- */
-const RastroChallenge = {
-  init() {
-    const root = document.getElementById("challenge");
-    if (!root || !root.dataset.total) return;
-
-    const total = parseInt(root.dataset.total, 10);
-    const perDay = parseInt(root.dataset.perDay, 10);
-    const chips = root.querySelectorAll(".day-chip");
-    const panels = root.querySelectorAll(".challenge-day");
-    const toast = document.getElementById("ch-toast");
-    let toastTimer = null;
-
-    function selectDay(day) {
-      chips.forEach((chip) => chip.setAttribute("aria-selected", chip.dataset.day === String(day) ? "true" : "false"));
-      panels.forEach((panel) => { panel.hidden = panel.dataset.day !== String(day); });
-      const chip = root.querySelector(`.day-chip[data-day="${day}"]`);
-      if (chip && chip.scrollIntoView) chip.scrollIntoView({ block: "nearest", inline: "center" });
+    function toggle(item) {
+      paint(item, !item.classList.contains("done"));
+      refresh(item.dataset.day);
+      save();
     }
 
-    function showError() {
-      if (!toast) return;
-      toast.hidden = false;
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => { toast.hidden = true; }, 4000);
-    }
-
-    // recalcula tudo a partir do que está marcado na tela (fonte única da verdade visual)
-    function refresh(day) {
-      const panel = root.querySelector(`.challenge-day[data-day="${day}"]`);
-      const dayDone = panel.querySelectorAll(".mission.done").length;
-      panel.querySelector(".challenge-day-count").textContent = `${dayDone}/${perDay} missões concluídas`;
-      panel.querySelector(".challenge-day-message").hidden = dayDone !== perDay;
-
-      const chip = root.querySelector(`.day-chip[data-day="${day}"]`);
-      chip.querySelector(".day-chip-count").textContent = `${dayDone}/${perDay}`;
-      chip.classList.toggle("is-done", dayDone === perDay);
-      chip.classList.toggle("is-progress", dayDone > 0 && dayDone < perDay);
-      chip.classList.toggle("is-idle", dayDone === 0);
-
-      const done = root.querySelectorAll(".mission.done").length;
-      const pct = Math.round((done / total) * 100);
-      const remaining = total - done;
-      document.getElementById("ch-total").textContent = `${done}/${total} missões`;
-      document.getElementById("ch-percent").textContent = `${pct}%`;
-      document.getElementById("ch-bar-fill").style.width = `${pct}%`;
-      document.getElementById("ch-bar").setAttribute("aria-valuenow", pct);
-      document.getElementById("ch-remaining").textContent = remaining === 0
-        ? "Você completou todas as missões."
-        : `Faltam ${remaining} ${remaining === 1 ? "missão" : "missões"} para completar o desafio.`;
-      document.getElementById("ch-final").hidden = remaining !== 0;
-    }
-
-    function paint(item, done) {
-      item.classList.toggle("done", done);
-      item.setAttribute("aria-checked", done ? "true" : "false");
-      item.querySelector(".goal-check").textContent = done ? "✓" : "";
-    }
-
-    async function toggle(item) {
-      if (item.dataset.busy === "1") return;
-      item.dataset.busy = "1";
-      const day = item.dataset.day;
-      const wasDone = item.classList.contains("done");
-      const wantDone = !wasDone;
-
-      paint(item, wantDone); // muda na hora; volta atrás se o servidor recusar
-      refresh(day);
-      try {
-        const res = await fetch("/api/onepct/toggle", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ day: parseInt(day, 10), position: parseInt(item.dataset.pos, 10), done: wantDone }),
-        });
-        const data = await res.json();
-        if (!res.ok || data.error) throw new Error(data.error || "erro");
-      } catch (err) {
-        paint(item, wasDone);
-        refresh(day);
-        showError();
-      } finally {
-        delete item.dataset.busy;
-      }
-    }
+    // restaura o que já foi marcado e abre no primeiro dia incompleto
+    const saved = new Set(loadSaved());
+    root.querySelectorAll(".mission").forEach((m) => paint(m, saved.has(`${m.dataset.day}-${m.dataset.pos}`)));
+    chips.forEach((chip) => refresh(chip.dataset.day));
+    const firstOpen = Array.from(chips).find((c) => !c.classList.contains("is-done"));
+    selectDay(firstOpen ? firstOpen.dataset.day : 1);
 
     chips.forEach((chip) => chip.addEventListener("click", () => selectDay(chip.dataset.day)));
     root.querySelectorAll(".challenge-step").forEach((btn) => {
