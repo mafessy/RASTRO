@@ -7,9 +7,10 @@ qualquer motivo (rede, formato de resposta, etc.), cai automaticamente no
 gerador baseado em regras (data.build_full_cycle), pra nunca deixar
 o usuário sem metas por causa de uma falha externa.
 
-Em qualquer um dos dois casos, o resultado vira um AIGoalDraft com
-status="pendente" — ele só vira metas de verdade pro usuário depois que um
-admin aprovar (ver goal_engine.activate_draft).
+Em qualquer um dos dois casos, o resultado vira um AIGoalDraft. Com
+goal_engine.AUTO_APPROVE_DRAFTS ligado (padrão), ele é aprovado na hora e já
+vira o ciclo ativo do usuário; com o interruptor desligado, fica
+status="pendente" até um admin aprovar (ver goal_engine.activate_draft).
 """
 
 import json
