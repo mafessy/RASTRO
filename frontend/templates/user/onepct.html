@@ -8,6 +8,16 @@
     <p>Pequenas ações diárias que constroem sua meta semanal — e a semanal constrói a meta do mês.</p>
   </div>
 
+  <div class="onepct-tabs" role="tablist" aria-label="Seções do 1%">
+    <button type="button" role="tab" class="onepct-tab active" data-pane="desafio" aria-selected="true">Desafio dos 7 dias</button>
+    <button type="button" role="tab" class="onepct-tab" data-pane="ciclo" aria-selected="false">Meu ciclo</button>
+  </div>
+
+  <div class="onepct-pane" id="pane-desafio" role="tabpanel">
+    {% include "user/_onepct_challenge.html" %}
+  </div>
+
+  <div class="onepct-pane" id="pane-ciclo" role="tabpanel" hidden>
   {% if state == 'pendente' %}
   <div class="onepct-layout">
     <div class="onepct-main">
@@ -156,6 +166,7 @@
     </div>
   </div>
   {% endif %}
+  </div>
 </section>
 {% endblock %}
-{% block scripts %}<script>RastroCycle.init();</script>{% endblock %}
+{% block scripts %}<script>RastroCycle.init();RastroChallenge.init();RastroOnepctTabs.init();</script>{% endblock %}
