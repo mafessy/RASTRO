@@ -100,19 +100,14 @@ def talk():
 
 
 def _challenge_context(user):
-    """Monta o que a aba 1% precisa pra mostrar o desafio dos 7 dias.
+    """Monta o desafio dos 7 dias da aba 1%.
 
-    Se a tabela ainda não existir (falta rodar /admin/sync-db) ou o banco
-    falhar, a página continua abrindo e o desafio mostra um aviso de erro.
+    O desafio NÃO usa banco de dados: as missões vêm do data.py e o que o
+    visitante marca fica salvo no próprio navegador (localStorage), lido pelo
+    app.js. Por isso ele carrega sempre, mesmo sem a tabela onepct_missions.
     """
     done = set()
     error = False
-    try:
-        rows = OnePctMission.query.filter_by(user_id=user.id).all()
-        done = {(row.day, row.position) for row in rows}
-    except SQLAlchemyError:
-        db.session.rollback()
-        error = True
 
     days = []
     for day in ONEPCT_CHALLENGE:
@@ -377,46 +372,6 @@ def api_goals_toggle():
         "progress": progress,
         "remaining": remaining,
     })
-
-
-@bp.post("/api/onepct/toggle")
-@login_required
-def api_onepct_toggle():
-    """Marca/desmarca uma missão do desafio dos 7 dias.
-
-    data = {day: 1..7, position: 1..5, done: true|false}. É idempotente: o
-    cliente diz o estado que quer, então um clique repetido não desfaz o outro.
-    """
-    user = current_user()
-    data = request.get_json(silent=True) or {}
-    try:
-        day = int(data.get("day"))
-        position = int(data.get("position"))
-    except (TypeError, ValueError):
-        return jsonify({"error": "dados inválidos"}), 400
-    if not (1 <= day <= ONEPCT_CHALLENGE_DAYS and 1 <= position <= ONEPCT_MISSIONS_PER_DAY):
-        return jsonify({"error": "missão inexistente"}), 400
-    if not isinstance(data.get("done"), bool):
-        return jsonify({"error": "estado inválido"}), 400
-    want_done = data["done"]
-
-    try:
-        existing = OnePctMission.query.filter_by(user_id=user.id, day=day, position=position).first()
-        if want_done and not existing:
-            db.session.add(OnePctMission(user_id=user.id, day=day, position=position))
-        elif not want_done and existing:
-            db.session.delete(existing)
-        db.session.commit()
-    except IntegrityError:
-        # duas abas marcaram a mesma missão ao mesmo tempo: o resultado desejado já existe
-        db.session.rollback()
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"error": "falha ao salvar"}), 500
-
-    day_done = OnePctMission.query.filter_by(user_id=user.id, day=day).count()
-    total_done = OnePctMission.query.filter_by(user_id=user.id).count()
-    return jsonify({"ok": True, "done": want_done, "day_done": day_done, "total_done": total_done})
 
 
 @bp.post("/api/rewards/redeem")
