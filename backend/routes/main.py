@@ -95,6 +95,20 @@ def talk():
 @login_required
 def onepct():
     user = current_user()
+
+    # rascunhos antigos que ainda estavam "pendentes" (criados antes da
+    # aprovação automática) são liberados aqui, em ordem de ciclo
+    if goal_engine.AUTO_APPROVE_DRAFTS:
+        pending_drafts = (
+            AIGoalDraft.query.filter_by(user_id=user.id, status="pendente")
+            .order_by(AIGoalDraft.cycle_number)
+            .all()
+        )
+        for pending in pending_drafts:
+            goal_engine.activate_draft(pending, None)
+        if pending_drafts:
+            db.session.commit()
+
     cycle = (
         MonthlyCycle.query.filter_by(user_id=user.id, status="ativo")
         .order_by(MonthlyCycle.cycle_number.desc())
@@ -241,7 +255,7 @@ def api_talk_answer():
             "step": 4,
             "objective": objective,
             "barrier": barrier,
-            "reply": "Pronto. Já preparei seu primeiro bloco de metas do mês — ele está passando por uma revisão rápida e já aparece no 1% assim que for liberado.",
+            "reply": "Pronto. Já preparei seu primeiro bloco de metas do mês — ele já está disponível na aba 1%.",
             "redirect": "/onepct",
         })
 
@@ -463,5 +477,5 @@ def atualizar_tudo():
     goal_engine.request_new_draft(user, cycle_number=next_cycle_number, payload=payload, source=source)
     db.session.commit()
 
-    flash("Informações atualizadas! Um novo bloco de metas foi gerado e está em aprovação.")
+    flash("Informações atualizadas! Um novo bloco de metas foi gerado e já está disponível no 1%.")
     return redirect(url_for("main.onepct"))
