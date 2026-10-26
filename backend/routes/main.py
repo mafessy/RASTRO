@@ -21,6 +21,12 @@ from backend.data import (
     BENEFITS,
     MOOD_OPTIONS,
     PATTERNS,
+    ONEPCT_CHALLENGE,
+    ONEPCT_CHALLENGE_DAYS,
+    ONEPCT_CHALLENGE_TOTAL,
+    ONEPCT_DAY_MESSAGE,
+    ONEPCT_FINAL_MESSAGE,
+    ONEPCT_MISSIONS_PER_DAY,
     REWARDS,
     SATISFACTION_CONTEXTS,
     detect_barrier,
@@ -45,6 +51,7 @@ from backend.models import (
     CheckinLog,
     DailyGoal,
     MonthlyCycle,
+    OnePctMission,
     ProgramFeedback,
     SatisfactionEntry,
     SecretPost,
@@ -52,6 +59,7 @@ from backend.models import (
     db,
 )
 from backend.services import ai_goals, goal_engine
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 bp = Blueprint("main", __name__)
 
@@ -91,10 +99,58 @@ def talk():
     )
 
 
+def _challenge_context(user):
+    """Monta o que a aba 1% precisa pra mostrar o desafio dos 7 dias.
+
+    Se a tabela ainda não existir (falta rodar /admin/sync-db) ou o banco
+    falhar, a página continua abrindo e o desafio mostra um aviso de erro.
+    """
+    done = set()
+    error = False
+    try:
+        rows = OnePctMission.query.filter_by(user_id=user.id).all()
+        done = {(row.day, row.position) for row in rows}
+    except SQLAlchemyError:
+        db.session.rollback()
+        error = True
+
+    days = []
+    for day in ONEPCT_CHALLENGE:
+        missions = [
+            {"position": index, "text": text, "done": (day["day"], index) in done}
+            for index, text in enumerate(day["missions"], start=1)
+        ]
+        days.append({
+            "day": day["day"],
+            "title": day["title"],
+            "emoji": day["emoji"],
+            "subtitle": day["subtitle"],
+            "missions": missions,
+            "done_count": sum(1 for m in missions if m["done"]),
+        })
+
+    total_done = sum(day["done_count"] for day in days)
+    # abre no primeiro dia ainda incompleto (ou no dia 1 se tudo estiver feito)
+    selected_day = next(
+        (day["day"] for day in days if day["done_count"] < ONEPCT_MISSIONS_PER_DAY), 1
+    )
+    return {
+        "challenge_days": days,
+        "challenge_total": ONEPCT_CHALLENGE_TOTAL,
+        "challenge_total_done": total_done,
+        "challenge_per_day": ONEPCT_MISSIONS_PER_DAY,
+        "challenge_selected_day": selected_day,
+        "challenge_error": error,
+        "challenge_day_message": ONEPCT_DAY_MESSAGE,
+        "challenge_final_message": ONEPCT_FINAL_MESSAGE,
+    }
+
+
 @bp.route("/onepct")
 @login_required
 def onepct():
     user = current_user()
+    challenge = _challenge_context(user)
 
     # rascunhos antigos que ainda estavam "pendentes" (criados antes da
     # aprovação automática) são liberados aqui, em ordem de ciclo
@@ -121,6 +177,7 @@ def onepct():
             state="ativo",
             cycle=cycle,
             points={"monthly": MONTHLY_POINTS, "weekly": WEEKLY_POINTS, "daily": DAILY_POINTS},
+            **challenge,
         )
 
     draft = (
@@ -129,9 +186,11 @@ def onepct():
         .first()
     )
     if draft:
-        return render_template("user/onepct.html", active="onepct", state="pendente", draft=draft)
+        return render_template(
+            "user/onepct.html", active="onepct", state="pendente", draft=draft, **challenge
+        )
 
-    return render_template("user/onepct.html", active="onepct", state="nenhum")
+    return render_template("user/onepct.html", active="onepct", state="nenhum", **challenge)
 
 
 @bp.route("/secret")
@@ -318,6 +377,46 @@ def api_goals_toggle():
         "progress": progress,
         "remaining": remaining,
     })
+
+
+@bp.post("/api/onepct/toggle")
+@login_required
+def api_onepct_toggle():
+    """Marca/desmarca uma missão do desafio dos 7 dias.
+
+    data = {day: 1..7, position: 1..5, done: true|false}. É idempotente: o
+    cliente diz o estado que quer, então um clique repetido não desfaz o outro.
+    """
+    user = current_user()
+    data = request.get_json(silent=True) or {}
+    try:
+        day = int(data.get("day"))
+        position = int(data.get("position"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "dados inválidos"}), 400
+    if not (1 <= day <= ONEPCT_CHALLENGE_DAYS and 1 <= position <= ONEPCT_MISSIONS_PER_DAY):
+        return jsonify({"error": "missão inexistente"}), 400
+    if not isinstance(data.get("done"), bool):
+        return jsonify({"error": "estado inválido"}), 400
+    want_done = data["done"]
+
+    try:
+        existing = OnePctMission.query.filter_by(user_id=user.id, day=day, position=position).first()
+        if want_done and not existing:
+            db.session.add(OnePctMission(user_id=user.id, day=day, position=position))
+        elif not want_done and existing:
+            db.session.delete(existing)
+        db.session.commit()
+    except IntegrityError:
+        # duas abas marcaram a mesma missão ao mesmo tempo: o resultado desejado já existe
+        db.session.rollback()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"error": "falha ao salvar"}), 500
+
+    day_done = OnePctMission.query.filter_by(user_id=user.id, day=day).count()
+    total_done = OnePctMission.query.filter_by(user_id=user.id).count()
+    return jsonify({"ok": True, "done": want_done, "day_done": day_done, "total_done": total_done})
 
 
 @bp.post("/api/rewards/redeem")
