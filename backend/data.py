@@ -685,3 +685,101 @@ WORLD_REAL_PLACES = [
         "description": "Livraria e café para quem gosta de literatura e encontros culturais.",
     },
 ]
+
+
+# ==================== DESAFIO DOS 7 DIAS (aba 1%) ====================
+# Conteúdo fixo: 7 dias x 5 missões = 35 missões. Cada missão é identificada
+# por (dia, posição), ambos começando em 1 — é essa dupla que o banco guarda
+# (models.OnePctMission) quando o usuário marca uma missão como concluída.
+ONEPCT_CHALLENGE_DAYS = 7
+ONEPCT_MISSIONS_PER_DAY = 5
+ONEPCT_CHALLENGE_TOTAL = ONEPCT_CHALLENGE_DAYS * ONEPCT_MISSIONS_PER_DAY
+
+ONEPCT_DAY_MESSAGE = (
+    "Você concluiu as 5 missões de hoje. Pequenas ações, repetidas com "
+    "consistência, constroem grandes mudanças."
+)
+ONEPCT_FINAL_MESSAGE = (
+    "Desafio concluído! Você dedicou tempo à sua evolução durante os últimos "
+    "7 dias. Continue construindo sua melhor versão, um passo de cada vez."
+)
+
+ONEPCT_CHALLENGE = [
+    {
+        "day": 1, "title": "Disciplina", "emoji": "🧭",
+        "subtitle": "Pequenos compromissos que treinam a constância.",
+        "missions": [
+            "Arrumar a cama ao acordar",
+            "Beber um copo de água",
+            "Organizar a mesa por 2 minutos",
+            "Fazer uma tarefa que está adiando",
+            "Ficar 5 minutos longe do celular",
+        ],
+    },
+    {
+        "day": 2, "title": "Conhecimento", "emoji": "📚",
+        "subtitle": "Aprender um pouco hoje já muda o amanhã.",
+        "missions": [
+            "Ler 2 páginas de um livro",
+            "Aprender uma palavra nova",
+            "Pesquisar algo que sempre quis entender",
+            "Assistir a um vídeo educativo de 3 minutos",
+            "Escrever uma coisa nova que aprendeu hoje",
+        ],
+    },
+    {
+        "day": 3, "title": "Corpo e energia", "emoji": "⚡",
+        "subtitle": "Movimento leve, no seu ritmo.",
+        "missions": [
+            "Fazer 10 agachamentos no seu ritmo",
+            "Alongar o corpo por 2 minutos",
+            "Caminhar pela casa durante 3 minutos",
+            "Fazer 10 respirações lentas e profundas",
+            "Levantar e se movimentar após ficar sentado",
+        ],
+    },
+    {
+        "day": 4, "title": "Mentalidade", "emoji": "🧠",
+        "subtitle": "Olhar para dentro com gentileza.",
+        "missions": [
+            "Escrever 3 coisas pelas quais é grato",
+            "Identificar algo que deseja melhorar em si",
+            "Escrever uma pequena vitória do dia",
+            "Passar 2 minutos em silêncio, sem telas",
+            "Transformar um pensamento negativo em uma ação possível",
+        ],
+    },
+    {
+        "day": 5, "title": "Organização", "emoji": "🗂️",
+        "subtitle": "Menos bagunça, mais clareza.",
+        "missions": [
+            "Jogar fora ou reciclar 3 itens desnecessários",
+            "Organizar uma pequena gaveta ou prateleira",
+            "Escrever as 3 prioridades de amanhã",
+            "Deixar separado algo que usará amanhã",
+            "Apagar 5 arquivos ou fotos desnecessários do celular",
+        ],
+    },
+    {
+        "day": 6, "title": "Bem-estar", "emoji": "🌿",
+        "subtitle": "Cuidar de você também é progresso.",
+        "missions": [
+            "Fazer algo de que gosta por 5 minutos",
+            "Enviar uma mensagem positiva para alguém",
+            "Fazer uma pausa de 5 minutos sem telas",
+            "Ouvir uma música prestando atenção nela",
+            "Reconhecer uma qualidade sua e escrevê-la",
+        ],
+    },
+    {
+        "day": 7, "title": "Evolução", "emoji": "🌱",
+        "subtitle": "Olhe para trás e escolha o próximo passo.",
+        "missions": [
+            "Revisar uma meta pessoal",
+            "Escrever algo que fez bem nesta semana",
+            "Identificar um hábito que deseja abandonar",
+            "Escolher um hábito pequeno para manter na próxima semana",
+            "Definir uma meta simples para os próximos 7 dias",
+        ],
+    },
+]
