@@ -15,7 +15,7 @@ admin aprovar (ver goal_engine.activate_draft).
 import json
 import os
 
-from backend.data import PATTERNS, build_full_cycle, fixed_daily_weeks
+from backend.data import PATTERNS, build_full_cycle
 
 ANTHROPIC_MODEL = "claude-sonnet-4-6"
 
@@ -88,8 +88,6 @@ def generate_goal_payload(objective, barrier):
 
     payload = _call_anthropic(objective, barrier, pattern)
     if payload is not None:
-        # os textos das metas diárias são sempre os fixos; a IA só personaliza mensal e semanais
-        payload["daily"] = fixed_daily_weeks()
         return payload, "ia"
 
     return build_full_cycle(objective, barrier), "regra"
