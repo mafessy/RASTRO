@@ -1,86 +1,172 @@
-{# Desafio dos 7 dias (5 missões por dia). Dados vêm de main._challenge_context. #}
-{% set pct = ((challenge_total_done * 100) / challenge_total)|round|int %}
-{% set remaining = challenge_total - challenge_total_done %}
-<div class="challenge" id="challenge"
-     data-total="{{ challenge_total }}"
-     data-per-day="{{ challenge_per_day }}"
-     data-selected="{{ challenge_selected_day }}">
-
-  {% if challenge_error %}
-  <div class="insight-card challenge-error" role="alert">
-    <p class="eyebrow sun-text">DESAFIO INDISPONÍVEL</p>
-    <h2>Não conseguimos carregar o desafio agora.</h2>
-    <p>Seu progresso não foi perdido. Tente recarregar a página em alguns instantes.</p>
-  </div>
-  {% else %}
-
-  <div class="insight-card challenge-summary">
-    <p class="eyebrow sun-text">DESAFIO DOS 7 DIAS</p>
-    <h2>Melhore 1% por dia</h2>
-    <p>Cinco pequenas ações por dia, gratuitas e possíveis de fazer em casa. Siga no seu ritmo: você pode abrir qualquer dia quando quiser.</p>
-
-    <div class="challenge-progress-head">
-      <strong id="ch-total">{{ challenge_total_done }}/{{ challenge_total }} missões</strong>
-      <span id="ch-percent">{{ pct }}%</span>
-    </div>
-    <div class="challenge-bar" id="ch-bar" role="progressbar" aria-label="Progresso do desafio"
-         aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ pct }}">
-      <span id="ch-bar-fill" style="width: {{ pct }}%"></span>
-    </div>
-    <small id="ch-remaining" aria-live="polite">
-      {% if remaining == 0 %}Você completou todas as missões.
-      {% else %}Faltam {{ remaining }} {{ 'missão' if remaining == 1 else 'missões' }} para completar o desafio.{% endif %}
-    </small>
-
-    <p class="challenge-final" id="ch-final" {% if remaining != 0 %}hidden{% endif %}>{{ challenge_final_message }}</p>
+{% extends "base.html" %}
+{% block title %}1%{% endblock %}
+{% block content %}
+<section class="screen one-screen">
+  <div class="screen-heading">
+    <p class="eyebrow sun-text">1%</p>
+    <h1>Seu 1% deste ciclo</h1>
+    <p>Pequenas ações diárias que constroem sua meta semanal — e a semanal constrói a meta do mês.</p>
   </div>
 
-  <nav class="challenge-days" role="tablist" aria-label="Dias do desafio">
-    {% for day in challenge_days %}
-    {% set st = 'is-done' if day.done_count == challenge_per_day else ('is-progress' if day.done_count > 0 else 'is-idle') %}
-    <button type="button" role="tab" class="day-chip {{ st }}" id="day-tab-{{ day.day }}"
-            data-day="{{ day.day }}" aria-controls="day-panel-{{ day.day }}"
-            aria-selected="{{ 'true' if day.day == challenge_selected_day else 'false' }}">
-      <span class="day-chip-name">Dia {{ day.day }}</span>
-      <small class="day-chip-count">{{ day.done_count }}/{{ challenge_per_day }}</small>
-    </button>
+  <div class="onepct-tabs" role="tablist" aria-label="Seções do 1%">
+    <button type="button" role="tab" class="onepct-tab active" data-pane="desafio" aria-selected="true">Desafio dos 7 dias</button>
+    <button type="button" role="tab" class="onepct-tab" data-pane="ciclo" aria-selected="false">Meu ciclo</button>
+  </div>
+
+  <div class="onepct-pane" id="pane-desafio" role="tabpanel">
+    {% include "user/_onepct_challenge.html" %}
+  </div>
+
+  <div class="onepct-pane" id="pane-ciclo" role="tabpanel" hidden>
+  {% if state == 'pendente' %}
+  <div class="onepct-layout">
+    <div class="onepct-main">
+      <div class="insight-card">
+        <p class="eyebrow sun-text">EM REVISÃO</p>
+        <h2>Seu novo bloco de metas está sendo preparado.</h2>
+        <p>A partir do que você contou no TALK ({{ draft.objective }} · {{ draft.barrier }}), já geramos um bloco
+        completo de metas para o seu próximo ciclo. Ele está aguardando aprovação da nossa equipe antes de
+        aparecer aqui — isso costuma ser rápido.</p>
+      </div>
+    </div>
+  </div>
+
+  {% elif state == 'ativo' %}
+  {# ---- coleta as metas já concluídas pra arquivá-las fora do fluxo principal ---- #}
+  {% set archived_daily = [] %}
+  {% for w in cycle.weekly_goals %}
+    {% for d in w.daily_goals if d.done %}
+      {% set _ = archived_daily.append(d) %}
     {% endfor %}
-  </nav>
-
-  {% for day in challenge_days %}
-  <section class="challenge-day" id="day-panel-{{ day.day }}" role="tabpanel"
-           aria-labelledby="day-tab-{{ day.day }}" data-day="{{ day.day }}"
-           {% if day.day != challenge_selected_day %}hidden{% endif %}>
-    <header class="challenge-day-head">
-      <span class="challenge-day-emoji" aria-hidden="true">{{ day.emoji }}</span>
-      <div>
-        <h3>Dia {{ day.day }} — {{ day.title }}</h3>
-        <p>{{ day.subtitle }}</p>
-      </div>
-      <span class="challenge-day-count" aria-live="polite">{{ day.done_count }}/{{ challenge_per_day }} missões concluídas</span>
-    </header>
-
-    <div class="goal-list">
-      {% for m in day.missions %}
-      <div class="goal mission {{ 'done' if m.done }}" role="checkbox" tabindex="0"
-           aria-checked="{{ 'true' if m.done else 'false' }}"
-           data-day="{{ day.day }}" data-pos="{{ m.position }}">
-        <span class="goal-emoji" aria-hidden="true">{{ m.position }}</span>
-        <div class="goal-content"><strong>{{ m.text }}</strong></div>
-        <span class="goal-check" aria-hidden="true">{% if m.done %}✓{% endif %}</span>
-      </div>
-      {% endfor %}
-    </div>
-
-    <p class="challenge-day-message" {% if day.done_count != challenge_per_day %}hidden{% endif %}>{{ challenge_day_message }}</p>
-
-    <div class="challenge-day-nav">
-      {% if day.day > 1 %}<button type="button" class="challenge-step" data-go="{{ day.day - 1 }}">← Dia {{ day.day - 1 }}</button>{% else %}<span></span>{% endif %}
-      {% if day.day < challenge_days|length %}<button type="button" class="challenge-step" data-go="{{ day.day + 1 }}">Dia {{ day.day + 1 }} →</button>{% endif %}
-    </div>
-  </section>
   {% endfor %}
+  {% set archived_weekly = cycle.weekly_goals|selectattr('done')|list %}
+  {% set archive_count = archived_daily|length + archived_weekly|length + (1 if cycle.monthly_done else 0) %}
 
-  <p class="challenge-toast" id="ch-toast" role="alert" hidden>Não foi possível salvar agora. Tente novamente.</p>
+  <div class="onepct-layout">
+    <div class="onepct-main">
+      <div class="onepct-banner">
+        <span class="big-one">{{ cycle.cycle_number }}º</span>
+        <div><strong>Ciclo em andamento</strong><small>{{ cycle.completed_items }}/145 metas concluídas · {{ cycle.progress_percent() }}%</small></div>
+        <span class="spark">✦</span>
+      </div>
+
+      {% if not cycle.monthly_done %}
+      <div class="goal monthly-goal" data-kind="monthly" data-id="{{ cycle.id }}" tabindex="0">
+        <span class="goal-emoji">🌕</span>
+        <div class="goal-content"><strong>Meta do mês</strong><small>{{ cycle.monthly_text }}</small></div>
+        <span class="goal-points">+{{ points.monthly }} pts</span>
+        <span class="goal-check"></span>
+      </div>
+      {% endif %}
+
+      {% for weekly in cycle.weekly_goals %}
+      {% set week_pending_daily = weekly.daily_goals|rejectattr('done')|list %}
+      {% set show_card = weekly.unlocked and not weekly.done %}
+      {% set show_days = weekly.daily_available and week_pending_daily %}
+      {% if show_card or show_days or not weekly.unlocked %}
+      <div class="weekly-block {{ 'locked' if not weekly.unlocked }}">
+        {% if show_card %}
+        <div class="goal weekly-goal" data-kind="weekly" data-id="{{ weekly.id }}" tabindex="0">
+          <span class="goal-emoji">🪐</span>
+          <div class="goal-content"><strong>Semana {{ weekly.order }}</strong><small>{{ weekly.text }}</small></div>
+          <span class="goal-points">+{{ points.weekly }} pts</span>
+          <span class="goal-check"></span>
+        </div>
+        {% elif not weekly.unlocked %}
+        <div class="goal weekly-goal locked-card">
+          <span class="goal-emoji">🔒</span>
+          <div class="goal-content"><strong>Semana {{ weekly.order }}</strong><small>Desbloqueia ao concluir mais metas</small></div>
+        </div>
+        {% endif %}
+
+        {% if show_days %}
+        {% set ns = namespace(opened=false) %}
+        {% for day in range(1, 8) %}
+        {% set day_pending = week_pending_daily|selectattr('day_number', 'equalto', day)|list %}
+        {% if day_pending %}
+        <details class="day-group" {{ 'open' if not ns.opened }}>
+          <summary>Dia {{ day }}</summary>
+          <div class="goal-list">
+            {% for d in day_pending %}
+            <div class="goal" data-kind="daily" data-id="{{ d.id }}" tabindex="0">
+              <span class="goal-emoji">🎯</span>
+              <div class="goal-content"><strong>{{ d.text }}</strong></div>
+              <span class="goal-points">+{{ points.daily }} pts</span>
+              <span class="goal-check"></span>
+            </div>
+            {% endfor %}
+          </div>
+        </details>
+        {% set ns.opened = true %}
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endfor %}
+
+      {% if archive_count > 0 %}
+      <details class="archive-section">
+        <summary>
+          <span>Metas arquivadas</span>
+          <span class="archive-count">{{ archive_count }}</span>
+        </summary>
+        <div class="goal-list archive-list">
+          {% if cycle.monthly_done %}
+          <div class="goal done archived" data-kind="monthly" data-id="{{ cycle.id }}" tabindex="0">
+            <span class="goal-emoji">🌕</span>
+            <div class="goal-content"><strong>Meta do mês</strong><small>{{ cycle.monthly_text }}</small></div>
+            <span class="goal-points">+{{ points.monthly }} pts</span>
+            <span class="goal-check">✓</span>
+          </div>
+          {% endif %}
+
+          {% for weekly in archived_weekly|sort(attribute='done_at', reverse=True) %}
+          <div class="goal done archived" data-kind="weekly" data-id="{{ weekly.id }}" tabindex="0">
+            <span class="goal-emoji">🪐</span>
+            <div class="goal-content"><strong>Semana {{ weekly.order }}</strong><small>{{ weekly.text }}</small></div>
+            <span class="goal-points">+{{ points.weekly }} pts</span>
+            <span class="goal-check">✓</span>
+          </div>
+          {% endfor %}
+
+          {% for d in archived_daily|sort(attribute='done_at', reverse=True) %}
+          <div class="goal done archived" data-kind="daily" data-id="{{ d.id }}" tabindex="0">
+            <span class="goal-emoji">🎯</span>
+            <div class="goal-content"><strong>{{ d.text }}</strong></div>
+            <span class="goal-points">+{{ points.daily }} pts</span>
+            <span class="goal-check">✓</span>
+          </div>
+          {% endfor %}
+        </div>
+      </details>
+      {% endif %}
+    </div>
+
+    <aside class="onepct-side">
+      <div class="insight-card">
+        <p class="eyebrow sun-text">SEU CONTEXTO</p>
+        <h2>{{ cycle.objective|title }}</h2>
+        <p>O Rastro escolheu essas ações a partir da barreira:</p>
+        <strong>{{ cycle.barrier }}</strong>
+      </div>
+      <div class="quote-card side-card">
+        <span>✦</span><p>Você não precisa terminar.<br><strong>Precisa começar.</strong></p>
+      </div>
+    </aside>
+  </div>
+
+  {% else %}
+  <div class="onepct-layout">
+    <div class="onepct-main">
+      <div class="insight-card">
+        <p class="eyebrow sun-text">AINDA SEM METAS</p>
+        <h2>Termine sua conversa no TALK pra receber seu primeiro bloco de metas.</h2>
+      </div>
+    </div>
+  </div>
   {% endif %}
-</div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script>RastroCycle.init();RastroChallenge.init();RastroOnepctTabs.init();</script>{% endblock %}
