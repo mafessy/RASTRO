@@ -21,10 +21,17 @@ from backend.models import (
     db,
 )
 
+# True  = o bloco de metas gerado já vira o ciclo ativo na hora, sem passar
+#         pela aprovação do /admin (modo atual, para os visitantes).
+# False = volta ao fluxo antigo: o rascunho fica "pendente" até um
+#         administrador aprovar.
+AUTO_APPROVE_DRAFTS = True
+
 
 def request_new_draft(user, cycle_number, payload, source):
-    """Cria um AIGoalDraft pendente de aprovação — não mexe em pontos nem
-    no ciclo ativo do usuário."""
+    """Cria o AIGoalDraft com o bloco de metas. Com AUTO_APPROVE_DRAFTS ligado
+    (padrão), ele é aprovado na hora e já vira o ciclo ativo do usuário; com
+    o interruptor desligado, fica pendente de aprovação do admin."""
     draft = AIGoalDraft(
         user_id=user.id,
         cycle_number=cycle_number,
@@ -35,12 +42,15 @@ def request_new_draft(user, cycle_number, payload, source):
         status="pendente",
     )
     db.session.add(draft)
+    if AUTO_APPROVE_DRAFTS:
+        activate_draft(draft, None)
     return draft
 
 
 def activate_draft(draft, admin_user):
-    """Admin aprovou: transforma o rascunho em um MonthlyCycle ativo de verdade,
-    com as 4 WeeklyGoal e as 140 DailyGoal já criadas (mas só a semana 1 com
+    """Aprova o rascunho (um admin, ou automaticamente quando admin_user é
+    None): transforma-o em um MonthlyCycle ativo de verdade, com as 4
+    WeeklyGoal e as 140 DailyGoal já criadas (mas só a semana 1 com
     daily_available=True)."""
     payload = draft.payload()
 
@@ -83,8 +93,10 @@ def activate_draft(draft, admin_user):
             ))
 
     draft.status = "aprovado"
-    draft.reviewed_by = admin_user.id
+    draft.reviewed_by = admin_user.id if admin_user else None
     draft.reviewed_at = datetime.utcnow()
+    if admin_user is None:
+        draft.review_note = "Aprovado automaticamente"
     return cycle
 
 
@@ -152,8 +164,9 @@ def _maybe_complete_cycle(user, cycle):
         cycle.completed_at = datetime.utcnow()
         user.points += CYCLE_BONUS_POINTS
 
-        # dispara automaticamente a geração do próximo bloco, pendente de aprovação
-        import ai_goals
+        # dispara automaticamente a geração do próximo bloco (que, com
+        # AUTO_APPROVE_DRAFTS ligado, já entra como o novo ciclo ativo)
+        from backend.services import ai_goals
         payload, source = ai_goals.generate_goal_payload(user.current_objective, user.current_barrier)
         request_new_draft(user, cycle.cycle_number + 1, payload, source)
 
