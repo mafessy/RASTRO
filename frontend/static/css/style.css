@@ -1,2376 +1,785 @@
-:root{
-  --bg:#03091a;--bg2:#06142b;--panel:#0b203b;--panel2:#102945;
-  --brand:#4fe0b3;--brand2:#159b7e;--sun:#f7bd6a;--dusk:#b8a6ef;
-  --text:#f5f8ff;--muted:#91a0bf;--border:rgba(143,192,224,.16);
-  --shadow:0 22px 70px rgba(0,0,0,.34);
-}
-
-*{box-sizing:border-box;margin:0;padding:0}
-
-html,body{min-height:100%}
-
-body{
-  font-family:Inter,Arial,sans-serif;
-  color:var(--text);
-  background:
-    radial-gradient(700px 500px at 70% -10%,rgba(36,108,148,.22),transparent 60%),
-    radial-gradient(600px 500px at 30% 100%,rgba(16,102,98,.15),transparent 60%),
-    linear-gradient(180deg,#020719,#06152b 70%,#071a2d);
-  min-height:100vh;
-  overflow-x:hidden
-}
-
-#starfield{
-  position:fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  z-index:0;
-  pointer-events:none;
-  opacity:.9
-}
-
-.app-shell{
-  position:relative;
-  z-index:2;
-  min-height:100vh;
-  display:flex
-}
-
-.sidebar{
-  width:108px;
-  min-width:108px;
-  border-right:1px solid rgba(119,184,220,.14);
-  background:linear-gradient(180deg,rgba(2,12,28,.94),rgba(4,18,36,.78));
-  backdrop-filter:blur(18px);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:18px 10px 20px;
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  z-index:10
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  width:100%;
-  height:72px
-}
-
-.brand img{
-  width:80px;
-  max-height:67px;
-  object-fit:contain;
-  display:block;
-  filter:drop-shadow(0 0 9px rgba(79,224,179,.18))
-}
-
-.side-nav{
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-  margin-top:13px
-}
-
-.nav-item{
-  min-height:45px;
-  border-radius:11px;
-  color:#c5d0e6;
-  text-decoration:none;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
-  font-size:10px;
-  transition:.2s;
-  border:1px solid transparent
-}
-
-.nav-item:hover{
-  background:rgba(79,224,179,.07);
-  color:#fff
-}
-
-.nav-item.active{
-  background:linear-gradient(180deg,rgba(16,132,112,.32),rgba(14,81,87,.22));
-  border-color:rgba(79,224,179,.15);
-  color:#fff;
-  box-shadow:inset 0 0 20px rgba(79,224,179,.04)
-}
-
-.nav-symbol{
-  font-size:21px;
-  line-height:18px;
-  color:#d5e5f1
-}
-
-.nav-item.active .nav-symbol{
-  color:var(--brand);
-  text-shadow:0 0 13px rgba(79,224,179,.55)
-}
-
-.nav-symbol.one,
-.bottom-nav .one{
-  font-family:Space Grotesk,sans-serif;
-  font-size:11px;
-  font-weight:700;
-  border:1.5px solid var(--sun);
-  border-radius:50%;
-  width:21px;
-  height:21px;
-  display:grid;
-  place-items:center;
-  color:var(--sun)
-}
-
-.sidebar-bottom{
-  margin-top:auto;
-  text-align:center;
-  color:#667995;
-  font-size:9px;
-  line-height:1.5
-}
-
-.sidebar-note strong{
-  color:#8aa2bf;
-  font-weight:600
-}
-
-.main-area{
-  margin-left:108px;
-  min-height:100vh;
-  width:calc(100% - 108px)
-}
-
-.mobile-topbar{display:none}
-
-.content{
-  max-width:1180px;
-  margin:0 auto;
-  padding:38px 38px 50px
-}
-
-.screen{animation:enter .45s ease}
-
-@keyframes enter{
-  from{opacity:0;transform:translateY(9px)}
-  to{opacity:1;transform:none}
-}
-
-.dashboard{
-  max-width:1040px;
-  margin:0 auto
-}
-
-.greeting{
-  display:flex;
-  justify-content:center;
-  text-align:center;
-  margin:8px 0 18px
-}
-
-.greeting h1{
-  font:600 26px/1.2 "Space Grotesk",sans-serif;
-  margin-bottom:7px
-}
-
-.greeting h1 span{font-size:21px}
-
-.greeting p:last-child{
-  font-size:14px;
-  color:#b8c4d8
-}
-
-.eyebrow{
-  font-size:9px;
-  letter-spacing:2.2px;
-  color:var(--brand);
-  font-weight:700;
-  margin-bottom:8px;
-  text-transform:uppercase
-}
-
-.sun-text{color:var(--sun)!important}
-.dusk-text{color:var(--dusk)!important}
-
-.mood-grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:8px;
-  max-width:700px;
-  margin:0 auto
-}
-
-.mood-card{
-  border:1px solid rgba(93,154,197,.17);
-  background:linear-gradient(180deg,rgba(11,40,70,.84),rgba(5,28,52,.82));
-  border-radius:10px;
-  color:#c7d2e5;
-  padding:11px 7px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:6px;
-  cursor:pointer;
-  transition:.2s
-}
-
-.mood-card span{font-size:23px}
-.mood-card small{
-  font-size:9px;
-  text-transform:none
-}
-
-.mood-card:hover,
-.mood-card.selected{
-  border-color:rgba(79,224,179,.55);
-  box-shadow:0 0 20px rgba(79,224,179,.10);
-  transform:translateY(-2px);
-  color:#fff
-}
-
-.checkin-feedback{
-  text-align:center;
-  height:18px;
-  color:var(--brand);
-  font-size:10px;
-  margin-top:7px
-}
-
-.dashboard-grid{
-  display:grid;
-  gap:13px
-}
-
-.top-cards{
-  grid-template-columns:1fr 1fr;
-  margin-top:6px
-}
-
-.bottom-cards{
-  grid-template-columns:1.45fr .55fr;
-  margin-top:13px
-}
-
-.dash-card,
-.side-card,
-.insight-card,
-.world-card,
-.profile-card,
-.secret-side-card{
-  background:linear-gradient(145deg,rgba(12,39,67,.82),rgba(5,27,49,.76));
-  border:1px solid var(--border);
-  border-radius:13px;
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(16px);
-  overflow-wrap:anywhere;
-  word-break:break-word
-}
-
-.dash-card{
-  padding:20px;
-  min-height:185px;
-  position:relative;
-  overflow:hidden
-}
-
-.secret-side-card{
-  padding:22px 20px
-}
-
-.dash-card:before{
-  content:"";
-  position:absolute;
-  inset:auto -30px -70px;
-  height:130px;
-  background:radial-gradient(ellipse,rgba(79,224,179,.07),transparent 70%);
-  pointer-events:none
-}
-
-.card-icon{
-  font-size:28px;
-  line-height:1;
-  margin-bottom:12px
-}
-
-.green{color:var(--brand)}
-.sun{color:var(--sun)}
-.dusk{color:var(--dusk)}
-
-.dash-card h2{
-  font:600 18px/1.25 "Space Grotesk",sans-serif;
-  max-width:390px
-}
-
-.dash-card p:not(.eyebrow){
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.55;
-  max-width:450px;
-  margin:9px 0 17px
-}
-
-.dash-card strong{color:#fff}
-
-.primary-btn,
-.outline-btn,
-.send-btn{
-  border:0;
-  border-radius:9px;
-  padding:10px 16px;
-  font:600 11px Inter,sans-serif;
-  text-decoration:none;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  transition:.2s
-}
-
-.primary-btn,
-.send-btn{
-  background:linear-gradient(135deg,#21ad8a,#127b6b);
-  color:#eafff8;
-  box-shadow:0 0 20px rgba(35,188,151,.18)
-}
-
-.primary-btn:hover,
-.send-btn:hover{
-  filter:brightness(1.1);
-  transform:translateY(-1px)
-}
-
-.outline-btn{
-  border:1px solid rgba(79,224,179,.28);
-  background:rgba(79,224,179,.05);
-  color:#9cebd4
-}
-
-.one-card{
-  background:linear-gradient(145deg,rgba(20,45,70,.88),rgba(10,30,49,.76))
-}
-
-.world-card,
-.secret-card{
-  min-height:220px
-}
-
-.card-top{
-  display:flex;
-  justify-content:space-between;
-  gap:15px
-}
-
-.small-link{
-  color:var(--sun);
-  font:600 11px Space Grotesk,sans-serif
-}
-
-.mini-world{
-  height:95px;
-  margin:10px 0 12px;
-  border-radius:10px;
-  position:relative;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 45%,rgba(79,224,179,.11),transparent 35%),
-    linear-gradient(180deg,rgba(2,14,32,.3),rgba(9,57,55,.12));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:20px
-}
-
-.mini-world-item{
-  font-size:30px;
-  filter:drop-shadow(0 0 8px rgba(79,224,179,.4));
-  animation:float 3.8s ease-in-out infinite
-}
-
-.mini-empty{font-size:42px}
-
-.secret-card p{max-width:270px}
-
-.home-quote{
-  margin:13px 0 0;
-  min-height:50px;
-  border:1px solid rgba(110,154,190,.12);
-  border-radius:11px;
-  background:rgba(12,38,63,.62);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:18px;
-  text-align:center;
-  color:#d9e2f1;
-  font-size:12px;
-  line-height:1.4
-}
-
-.home-quote span{
-  color:var(--sun);
-  font-size:19px
-}
-
-.screen-heading{
-  max-width:1000px;
-  margin:0 auto 24px
-}
-
-.screen-heading h1{
-  font:600 28px/1.2 "Space Grotesk",sans-serif;
-  margin-bottom:8px
-}
-
-.screen-heading>p:last-child{
-  font-size:13px;
-  color:var(--muted);
-  line-height:1.5
-}
-
-.screen-heading>p:last-child strong{color:#fff}
-
-.back-link{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  font-size:13px;
-  font-weight:500;
-  color:#c7d3e8;
-  text-decoration:none;
-  margin-bottom:16px;
-  padding:8px 14px;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:999px;
-  background:rgba(255,255,255,.04);
-  transition:border-color .15s ease,background .15s ease,color .15s ease
-}
-
-.back-link:hover{
-  color:var(--brand);
-  border-color:rgba(79,224,179,.5);
-  background:rgba(79,224,179,.08)
-}
-
-.back-link:focus-visible{
-  outline:2px solid var(--brand);
-  outline-offset:2px
-}
-
-/* variante fixa, grudada no canto superior esquerdo (encostada na sidebar),
-   usada nas páginas do World a pedido do usuário */
-.back-link.floating{
-  position:fixed;
-  top:24px;
-  left:128px;
-  z-index:50;
-  margin-bottom:0
-}
-
-@media (max-width:850px){
-  .back-link.floating{top:16px;left:14px}
-}
-
-.talk-layout,
-.onepct-layout,
-.world-layout,
-.secret-layout{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 280px;
-  gap:18px;
-  max-width:1000px;
-  margin:0 auto
-}
-
-/* Chat do voluntário — não tem sidebar, então não usa mais o grid de
-   2 colunas acima (senão sobra um espaço vazio à direita) */
-.chat-page{
-  max-width:700px;
-  margin:0 auto
-}
-
-.talk-flow{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin:0 0 12px
-}
-
-.talk-flow i{
-  height:1px;
-  flex:1;
-  background:rgba(255,255,255,.11)
-}
-
-.flow{
-  font-size:9px;
-  color:#71819e;
-  display:flex;
-  align-items:center;
-  gap:5px;
-  white-space:nowrap
-}
-
-.flow.active{color:var(--brand)}
-.flow b{font-weight:500}
-
-.chat-window{
-  background:linear-gradient(145deg,rgba(9,34,61,.94),rgba(5,24,45,.92));
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:13px;
-  box-shadow:var(--shadow)
-}
-
-.chat-intro{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  padding:12px;
-  border:1px solid rgba(79,224,179,.10);
-  border-radius:10px;
-  background:rgba(79,224,179,.035);
-  margin-bottom:12px
-}
-
-.chat-avatar{
-  width:35px;
-  height:35px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  color:var(--brand);
-  font-size:25px;
-  border:1px solid rgba(79,224,179,.3)
-}
-
-.chat-intro strong{
-  font-size:11px;
-  line-height:1.45
-}
-
-.chat-intro small{
-  display:block;
-  color:#7485a4;
-  font-size:9px;
-  margin-top:4px
-}
-
-.chat-log{
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-  min-height:215px;
-  max-height:390px;
-  overflow-y:auto;
-  overflow-x:hidden;
-  padding:2px 3px;
-  scrollbar-width:none;
-  -ms-overflow-style:none
-}
-
-.chat-log::-webkit-scrollbar{
-  display:none;
-  width:0;
-  height:0
-}
-
-.bubble{
-  max-width:78%;
-  padding:10px 13px;
-  border-radius:13px;
-  font-size:11px;
-  line-height:1.55;
-  overflow-wrap:anywhere;
-  word-break:break-word;
-  white-space:pre-wrap;
-  box-sizing:border-box
-}
-
-.bubble.rastro{
-  align-self:flex-start;
-  background:rgba(18,44,68,.88);
-  border:1px solid rgba(116,171,205,.12);
-  border-bottom-left-radius:4px
-}
-
-.bubble.user{
-  align-self:flex-end;
-  background:linear-gradient(135deg,#168c73,#0f705f);
-  border-bottom-right-radius:4px
-}
-
-.bubble strong{color:#fff}
-
-.chat-input-row{
-  display:flex;
-  align-items:flex-end;
-  gap:7px;
-  margin-top:10px
-}
-
-.chat-input{
-  flex:1;
-  border:1px solid var(--border);
-  border-radius:9px;
-  background:rgba(2,15,31,.65);
-  padding:10px 12px;
-  color:#fff;
-  font:11px Inter,sans-serif;
-  resize:none;
-  overflow-y:auto;
-  max-height:110px;
-  min-height:38px;
-  line-height:1.5;
-  overflow-wrap:anywhere;
-  word-break:break-word;
-  white-space:pre-wrap;
-  box-sizing:border-box;
-  scrollbar-width:none;
-  -ms-overflow-style:none
-}
-
-.chat-input::-webkit-scrollbar{
-  display:none;
-  width:0;
-  height:0
-}
-
-.chat-input::placeholder{color:#667895}
-
-.chat-input:focus{
-  outline:none;
-  border-color:rgba(79,224,179,.45)
-}
-
-.disclaimer{
-  color:#687997;
-  font-size:9px;
-  margin-top:9px
-}
-
-.side-card{padding:17px}
-
-.side-card .eyebrow{margin-bottom:14px}
-
-.mini-step{
-  display:flex;
-  gap:10px;
-  padding:11px 0;
-  border-bottom:1px solid rgba(255,255,255,.07)
-}
-
-.mini-step:last-child{border-bottom:0}
-
-.mini-step>span{
-  width:22px;
-  height:22px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  border:1px solid rgba(79,224,179,.3);
-  color:var(--brand);
-  font-size:9px;
-  flex:none
-}
-
-.mini-step strong{
-  font-size:10px;
-  display:block
-}
-
-.mini-step small{
-  font-size:9px;
-  color:var(--muted);
-  line-height:1.4
-}
-
-.quote-card{
-  margin-top:13px;
-  text-align:center;
-  color:#b9c7db;
-  font-size:11px;
-  line-height:1.5
-}
-
-.quote-card>span{
-  display:block;
-  color:var(--sun);
-  font-size:20px;
-  margin-bottom:8px
-}
-
-.quote-card strong{color:#fff}
-
-.onepct-banner{
-  display:flex;
-  align-items:center;
-  gap:13px;
-  padding:13px 15px;
-  border:1px solid rgba(247,189,106,.18);
-  border-radius:11px;
-  background:rgba(247,189,106,.055);
-  margin-bottom:12px
-}
-
-.big-one{
-  font:600 27px Space Grotesk,sans-serif;
-  color:var(--sun);
-  text-shadow:0 0 13px rgba(247,189,106,.4)
-}
-
-.onepct-banner strong{font-size:11px}
-
-.onepct-banner small{
-  display:block;
-  color:var(--muted);
-  font-size:9px;
-  margin-top:3px
-}
-
-.spark{
-  margin-left:auto;
-  color:var(--sun);
-  font-size:18px
-}
-
-.goal-list{
-  display:flex;
-  flex-direction:column;
-  gap:9px
-}
-
-.goal{
-  display:grid;
-  grid-template-columns:32px 1fr auto 24px;
-  align-items:center;
-  gap:10px;
-  padding:13px 12px;
-  background:linear-gradient(145deg,rgba(13,39,65,.88),rgba(6,27,48,.84));
-  border:1px solid var(--border);
-  border-radius:10px;
-  cursor:pointer;
-  transition:.2s
-}
-
-.goal:hover,
-.goal.done{
-  border-color:rgba(247,189,106,.3);
-  box-shadow:0 0 18px rgba(247,189,106,.08)
-}
-
-.goal.done{background:rgba(247,189,106,.07)}
-
-.goal-emoji{
-  font-size:21px;
-  text-align:center
-}
-
-.goal-content strong{
-  font-size:10.5px;
-  line-height:1.4;
-  display:block
-}
-
-.goal-content small{
-  color:var(--sun);
-  font-size:8px;
-  text-transform:uppercase;
-  letter-spacing:1px
-}
-
-.goal-points{
-  font:600 9px Space Grotesk,sans-serif;
-  color:var(--sun);
-  white-space:nowrap
-}
-
-.goal-check{
-  width:18px;
-  height:18px;
-  border:1px solid #72839e;
-  border-radius:5px;
-  display:grid;
-  place-items:center;
-  color:#08150f;
-  font-size:10px
-}
-
-.goal.done .goal-check{
-  background:var(--sun);
-  border-color:var(--sun)
-}
-
-.goal.done .goal-content strong{
-  text-decoration:line-through;
-  color:#7f8ca5
-}
-
-.onepct-stats{
-  display:grid;
-  grid-template-columns:.7fr 1.3fr;
-  gap:9px;
-  margin-top:10px
-}
-
-.onepct-stats>div{
-  background:rgba(9,32,54,.72);
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:11px
-}
-
-.onepct-stats small{
-  display:block;
-  color:var(--muted);
-  font-size:8px;
-  margin-bottom:5px
-}
-
-.onepct-stats strong{
-  font:600 12px Space Grotesk,sans-serif;
-  color:var(--sun)
-}
-
-.thin-progress{
-  height:4px;
-  background:rgba(255,255,255,.08);
-  border-radius:99px;
-  margin-top:8px;
-  overflow:hidden
-}
-
-.thin-progress span{
-  display:block;
-  height:100%;
-  background:var(--sun);
-  box-shadow:0 0 8px rgba(247,189,106,.45);
-  transition:.3s
-}
-
-.insight-card{padding:18px}
-
-.insight-card h2{
-  font:600 17px Space Grotesk,sans-serif;
-  margin-bottom:10px
-}
-
-.insight-card p{
-  color:var(--muted);
-  font-size:10px;
-  line-height:1.5
-}
-
-.insight-card>strong{
-  display:block;
-  color:#e8eef9;
-  font-size:10px;
-  margin-top:7px
-}
-
-.world-card{
-  padding:17px
-}
-
-.world-card h2{
-  font:600 17px Space Grotesk,sans-serif;
-  margin-bottom:8px
-}
-
-.world-card>p:not(.eyebrow){
-  font-size:10.5px;
-  line-height:1.55;
-  color:var(--muted);
-  margin-bottom:16px
-}
-
-.secret-layout{
-  grid-template-columns:minmax(0,1fr) 270px
-}
-
-/* Estava sem estilo: ícone + texto do bloco "AQUI, VOCÊ PODE"
-   ficavam desalinhados (mesmo padrão de .pattern/.mini-step) */
-.secret-point{
-  display:flex;
-  gap:11px;
-  align-items:flex-start;
-  padding:11px 0;
-  border-bottom:1px solid rgba(255,255,255,.07)
-}
-
-.secret-point:last-child{border-bottom:0}
-
-.secret-point>span{
-  width:25px;
-  height:25px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:rgba(184,166,239,.1);
-  color:var(--dusk);
-  font-size:11px;
-  flex:none
-}
-
-.secret-point p{
-  font-size:10px;
-  line-height:1.5;
-  color:#b5c1d4
-}
-
-.secret-safety{
-  display:flex;
-  gap:10px;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid rgba(184,166,239,.18);
-  background:rgba(184,166,239,.05);
-  margin-bottom:10px
-}
-
-.secret-safety span{font-size:18px}
-
-.secret-safety strong{font-size:10px}
-
-.secret-safety small{
-  display:block;
-  color:var(--muted);
-  font-size:8.5px;
-  line-height:1.45;
-  margin-top:3px
-}
-
-.secret-compose{
-  padding:13px;
-  border:1px solid var(--border);
-  border-radius:11px;
-  background:rgba(7,29,51,.78);
-  margin-bottom:12px
-}
-
-.secret-compose textarea{
-  width:100%;
-  min-height:78px;
-  resize:vertical;
-  background:transparent;
-  border:0;
-  color:#fff;
-  font:11px/1.5 Inter,sans-serif;
-  outline:0
-}
-
-.secret-compose textarea::placeholder{color:#667793}
-
-.secret-compose>div{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-top:6px
-}
-
-.secret-compose>div>span{
-  font-size:8px;
-  color:#71809c
-}
-
-.secret-feed{
-  display:flex;
-  flex-direction:column;
-  gap:9px
-}
-
-.secret-post{
-  background:linear-gradient(145deg,rgba(14,38,62,.86),rgba(7,28,49,.84));
-  border:1px solid var(--border);
-  border-left:2px solid var(--dusk);
-  border-radius:10px;
-  padding:13px
-}
-
-.secret-post p{
-  font-size:10.5px;
-  line-height:1.55;
-  color:#d7dfed
-}
-
-.secret-heart,
-.secret-report{
-  background:none;
-  border:0;
-  cursor:pointer;
-  font:9px Inter,sans-serif;
-  margin-top:9px
-}
-
-.secret-heart{color:var(--dusk)}
-
-.secret-report{
-  color:#687997;
-  margin-left:10px
-}
-
-.secret-heart:hover{color:#fff}
-
-.profile-stats{
-  max-width:1000px;
-  margin:0 auto 13px;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px
-}
-
-.profile-stats>div{
-  background:linear-gradient(145deg,rgba(11,37,63,.86),rgba(6,27,48,.84));
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:14px;
-  text-align:center
-}
-
-.profile-stats strong{
-  display:block;
-  font:600 22px Space Grotesk,sans-serif;
-  color:#fff
-}
-
-.profile-stats small{
-  display:block;
-  font-size:8px;
-  color:#8191ae;
-  margin-top:4px
-}
-
-.profile-grid{
-  max-width:1000px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:13px
-}
-
-.profile-card{padding:17px}
-
-.pattern{
-  display:flex;
-  gap:11px;
-  align-items:flex-start;
-  padding:11px 0;
-  border-bottom:1px solid rgba(255,255,255,.07)
-}
-
-.pattern:last-child{border-bottom:0}
-
-.pattern span{
-  width:25px;
-  height:25px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:rgba(79,224,179,.08);
-  color:var(--brand);
-  font-size:11px;
-  flex:none
-}
-
-.pattern p{
-  font-size:10px;
-  line-height:1.5;
-  color:#b5c1d4
-}
-
-.timeline{
-  border-left:1px solid rgba(79,224,179,.24);
-  margin:7px 0 14px 7px;
-  padding-left:18px
-}
-
-.timeline-item{
-  position:relative;
-  padding:0 0 17px
-}
-
-.timeline-item:before{
-  content:"";
-  position:absolute;
-  left:-23px;
-  top:2px;
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:var(--brand);
-  box-shadow:0 0 9px rgba(79,224,179,.4)
-}
-
-.timeline-item span{
-  display:block;
-  font-size:7px;
-  color:var(--brand);
-  margin-bottom:3px
-}
-
-.timeline-item b{
-  font-size:10px;
-  display:block
-}
-
-.timeline-item small{
-  font-size:8px;
-  color:var(--muted);
-  display:block;
-  margin-top:3px
-}
-
-.profile-quote{
-  max-width:1000px;
-  margin:13px auto 0;
-  border:1px solid var(--border);
-  border-radius:11px;
-  background:rgba(9,31,53,.7);
-  padding:13px;
-  text-align:center;
-  color:#bac7d9;
-  font-size:10px
-}
-
-.profile-quote span{
-  color:var(--sun);
-  margin-left:8px
-}
-
-.bottom-nav{display:none}
-
-@keyframes float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-5px)}
-}
-
-@media(max-width:850px){
-
-  .sidebar{display:none}
-
-  .main-area{
-    margin-left:0;
-    width:100%
-  }
-
-  .mobile-topbar{
-    height:72px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-    z-index:5
-  }
-
-  .mobile-brand img{
-    width:84px;
-    max-height:55px;
-    object-fit:contain
-  }
-
-  .content{padding:18px 17px 90px}
-
-  .bottom-nav{
-    position:fixed;
-    display:flex;
-    z-index:20;
-    left:8px;
-    right:8px;
-    bottom:8px;
-    height:64px;
-    border:1px solid rgba(119,184,220,.16);
-    border-radius:16px;
-    background:rgba(3,17,34,.92);
-    backdrop-filter:blur(18px);
-    box-shadow:0 10px 35px rgba(0,0,0,.4);
-    justify-content:space-around
-  }
-
-  .bottom-nav a{
-    flex:1;
-    color:#8e9cb5;
-    text-decoration:none;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    font-size:8px
-  }
-
-  .bottom-nav a span{
-    font-size:18px;
-    line-height:18px
-  }
-
-  .bottom-nav a.active{color:#fff}
-
-  .bottom-nav a.active span{
-    color:var(--brand);
-    text-shadow:0 0 10px rgba(79,224,179,.45)
-  }
-
-  .bottom-nav a span.one{
-    font-size:9px;
-    width:19px;
-    height:19px;
-    color:var(--sun);
-    border-color:var(--sun)
-  }
-
-  .top-cards,
-  .bottom-cards,
-  .talk-layout,
-  .onepct-layout,
-  .world-layout,
-  .secret-layout,
-  .profile-grid{
-    grid-template-columns:1fr
-  }
-
-  .talk-side,
-  .onepct-side,
-  .world-side,
-  .secret-side{
-    display:none
-  }
-
-  .mood-grid{gap:5px}
-
-  .mood-card{padding:9px 3px}
-
-  .mood-card span{font-size:20px}
-
-  .mood-card small{font-size:8px}
-
-  .screen-heading h1{font-size:24px}
-
-  .profile-stats{
-    grid-template-columns:repeat(2,1fr)
-  }
-
-  .admin-stats{
-    grid-template-columns:repeat(3,1fr)
-  }
-
-  .admin-grid{
-    grid-template-columns:1fr
-  }
-}
-
-@media(max-width:520px){
-
-  .greeting h1{font-size:22px}
-
-  .dashboard{width:100%}
-
-  .dash-card{
-    min-height:0;
-    padding:16px
-  }
-
-  .world-card,
-  .secret-card{
-    min-height:190px
-  }
-
-  .home-quote{font-size:9px}
-
-  .goal{
-    grid-template-columns:28px 1fr 23px
-  }
-
-  .goal-points{display:none}
-
-  .screen-heading{margin-bottom:18px}
-
-  .chat-log{min-height:190px}
-
-  .profile-stats strong{font-size:20px}
-}
-
-.talk-options{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin:1px 0 5px 0;
-  max-width:90%
-}
-
-.talk-option{
-  border:1px solid rgba(79,224,179,.18);
-  background:rgba(79,224,179,.05);
-  color:#b9eadb;
-  border-radius:8px;
-  padding:7px 9px;
-  font:9px Inter,sans-serif;
-  cursor:pointer;
-  transition:.2s
-}
-
-.talk-option:hover{
-  background:rgba(79,224,179,.12);
-  border-color:rgba(79,224,179,.42);
-  color:#fff
-}
-
-.talk-result{
-  margin-top:9px;
-  padding:10px 12px;
-  border-radius:9px;
-  background:rgba(79,224,179,.06);
-  border:1px solid rgba(79,224,179,.13);
-  display:flex;
-  gap:9px;
-  align-items:center
-}
-
-.talk-result>span{
-  color:var(--brand);
-  font-size:15px
-}
-
-.talk-result strong{
-  display:block;
-  font-size:9px
-}
-
-.talk-result small{
-  display:block;
-  color:var(--muted);
-  font-size:8px;
-  margin-top:2px
-}
-
-/* ---------------- flash messages ---------------- */
-
-.flash-banner{
-  max-width:1000px;
-  margin:0 auto 16px;
-  padding:11px 15px;
-  border-radius:10px;
-  border:1px solid rgba(247,189,106,.3);
-  background:rgba(247,189,106,.08);
-  color:#ffe3ba;
-  font-size:11px;
-  line-height:1.5
-}
-
-.flash-banner p{margin:0}
-.flash-banner p+p{margin-top:4px}
-
-/* ---------------- nav bloqueada ---------------- */
-
-.nav-item.locked{
-  opacity:.4;
-  cursor:default
-}
-
-.nav-item.locked .nav-symbol{
-  color:#5c6c88
-}
-
-.bottom-nav span.locked{
-  flex:1;
-  color:#5c6c88;
-  opacity:.55;
-  text-decoration:none;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
-  font-size:8px
-}
-
-.bottom-nav span.locked span{
-  font-size:18px;
-  line-height:18px
-}
-
-.logout-link{
-  display:block;
-  margin-top:10px;
-  color:#8aa2bf;
-  font-size:9px;
-  text-decoration:none;
-  text-align:center
-}
-
-.logout-link:hover{color:#fff}
-
-.mobile-logout{
-  margin-left:auto;
-  color:#cfe0f2;
-  font-size:13px;
-  font-weight:600;
-  text-decoration:none;
-  position:absolute;
-  right:16px;
-  padding:6px 12px;
-  border:1px solid rgba(79,224,179,.45);
-  border-radius:99px
-}
-
-.dash-card.locked,
-.world-card.locked,
-.secret-card.locked{
-  opacity:.55
-}
-
-.locked-btn{
-  background:rgba(255,255,255,.05)!important;
-  border:1px solid rgba(255,255,255,.1)!important;
-  color:#8b98b3!important;
-  box-shadow:none!important;
-  cursor:default
-}
-
-/* ---------------- landing / auth ---------------- */
-
-.landing-page{
-  position:relative;
-  z-index:2;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column
-}
-
-.landing-page--narrow{align-items:center}
-
-.landing-header{
-  display:flex;
-  justify-content:center;
-  padding:34px 20px 10px
-}
-
-.landing-header img{
-  width:120px;
-  object-fit:contain;
-  filter:drop-shadow(0 0 12px rgba(79,224,179,.2))
-}
-
-.landing-main{
-  flex:1;
-  max-width:1180px;
-  margin:0 auto;
-  width:100%;
-  padding:20px 28px 60px;
-  display:grid;
-  grid-template-columns:1.15fr .85fr;
-  gap:36px;
-  align-items:start
-}
-
-.landing-main--center{
-  grid-template-columns:1fr;
-  max-width:420px;
-  justify-items:center
-}
-
-.landing-main--legal{
-  grid-template-columns:1fr;
-  max-width:820px
-}
-
-.legal-card{
-  background:linear-gradient(145deg,rgba(12,39,67,.9),rgba(5,27,49,.86));
-  border:1px solid var(--border);
-  border-radius:16px;
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(18px);
-  padding:40px;
-  width:100%
-}
-
-.legal-card h1{
-  font:600 22px "Space Grotesk",sans-serif;
-  margin-bottom:6px
-}
-
-.legal-updated{
-  font-size:11px;
-  color:var(--muted);
-  margin-bottom:22px
-}
-
-.legal-intro{
-  font-size:12.5px;
-  line-height:1.7;
-  color:#c7d3e8;
-  margin-bottom:28px;
-  padding-bottom:26px;
-  border-bottom:1px solid var(--border)
-}
-
-/* índice */
-.legal-toc{
-  list-style:none;
-  margin:0 0 30px;
-  padding:16px 18px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:rgba(255,255,255,.02);
-  columns:2;
-  column-gap:20px
-}
-
-.legal-toc li{margin-bottom:6px;break-inside:avoid}
-
-.legal-toc a{
-  font-size:11.5px;
-  color:#9fb0cc;
-  text-decoration:none
-}
-
-.legal-toc a:hover{color:var(--brand)}
-
-@media(max-width:600px){
-  .legal-toc{columns:1}
-}
-
-/* título de cada parte (TERMOS DE USO / POLÍTICA DE PRIVACIDADE) */
-.legal-part{
-  font:700 10px "Space Grotesk",sans-serif;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--brand);
-  margin:44px 0 4px;
-  padding-top:30px;
-  border-top:1px solid var(--border)
-}
-
-.legal-part:first-of-type{
-  margin-top:0;
-  padding-top:0;
-  border-top:0
-}
-
-.legal-part-title{
-  font:600 19px "Space Grotesk",sans-serif;
-  color:#fff;
-  margin-bottom:18px
-}
-
-/* cláusulas numeradas */
-.legal-card h2{
-  font:600 14px "Space Grotesk",sans-serif;
-  color:#fff;
-  margin:26px 0 10px;
-  scroll-margin-top:20px
-}
-
-.legal-card h2 span{
-  color:var(--brand);
-  margin-right:6px
-}
-
-.legal-card h2:first-of-type{margin-top:0}
-
-.legal-card p{
-  font-size:12.5px;
-  line-height:1.7;
-  color:#c7d3e8;
-  margin-bottom:10px
-}
-
-.legal-card ul,
-.legal-card ol{
-  margin:0 0 14px 18px;
-  padding:0
-}
-
-.legal-card li{
-  font-size:12.5px;
-  line-height:1.7;
-  color:#c7d3e8;
-  margin-bottom:6px
-}
-
-.legal-card ol.legal-alpha{list-style-type:lower-alpha}
-
-.legal-card strong{color:#fff}
-
-.legal-card a{color:var(--brand)}
-
-.legal-note{
-  font-size:11px;
-  line-height:1.6;
-  color:#8aa2bf;
-  background:rgba(255,255,255,.03);
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:14px 16px;
-  margin:16px 0
-}
-
-.legal-back{
-  display:inline-block;
-  margin-top:30px;
-  font-size:12px;
-  color:var(--muted);
-  text-decoration:none
-}
-
-.legal-back:hover{color:#fff}
-
-@media(max-width:520px){
-  .legal-card{padding:22px}
-  .legal-toc{columns:1}
-}
-
-.landing-hero h1{
-  font:600 30px/1.35 "Space Grotesk",sans-serif;
-  margin:10px 0 16px
-}
-
-.landing-lede{
-  font-size:13px;
-  line-height:1.65;
-  color:var(--muted);
-  max-width:520px;
-  margin-bottom:26px
-}
-
-.landing-lede strong{color:#fff}
-
-.landing-features{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  max-width:520px
-}
-
-.landing-feature{
-  display:flex;
-  gap:13px;
-  align-items:flex-start;
-  padding:13px 15px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:linear-gradient(145deg,rgba(12,39,67,.7),rgba(5,27,49,.6));
-  backdrop-filter:blur(12px)
-}
-
-.landing-feature strong{
-  display:block;
-  font:600 11px "Space Grotesk",sans-serif;
-  margin-bottom:3px
-}
-
-/* Deixa o ícone "1%" branco só na landing (nos outros lugares do app
-   ele continua amarelo, usando var(--sun)) */
-.landing-page .nav-symbol.one{
-  border-color:#fff;
-  color:#fff
-}
-
-.landing-feature small{
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-  line-height:1.5
-}
-
-.auth-card{
-  background:linear-gradient(145deg,rgba(12,39,67,.9),rgba(5,27,49,.86));
-  border:1px solid var(--border);
-  border-radius:16px;
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(18px);
-  padding:26px;
-  max-width:400px;
-  width:100%;
-  position:sticky;
-  top:24px
-}
-
-.admin-title{
-  font:600 18px "Space Grotesk",sans-serif;
-  margin:8px 0 18px
-}
-
-.auth-tabs{
-  display:flex;
-  gap:6px;
-  margin-bottom:18px;
-  background:rgba(2,15,31,.5);
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:4px
-}
-
-.auth-tab{
-  flex:1;
-  border:0;
-  background:transparent;
-  color:#93a2bf;
-  font:600 11px Inter,sans-serif;
-  padding:9px 6px;
-  border-radius:8px;
-  cursor:pointer;
-  transition:.2s
-}
-
-.auth-tab.active{
-  background:linear-gradient(135deg,#21ad8a,#127b6b);
-  color:#eafff8
-}
-
-.auth-form{
-  display:none;
-  flex-direction:column;
-  gap:13px
-}
-
-.auth-form.active{display:flex}
-
-.auth-form label{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  font-size:10px;
-  color:#9cabc7;
-  text-transform:uppercase;
-  letter-spacing:.5px
-}
-
-.auth-form input{
-  border:1px solid var(--border);
-  border-radius:9px;
-  background:rgba(2,15,31,.65);
-  padding:11px 12px;
-  color:#fff;
-  font:12px Inter,sans-serif
-}
-
-.auth-form input:focus{
-  outline:none;
-  border-color:rgba(79,224,179,.45)
-}
-
-.auth-submit{
-  width:100%;
-  padding:12px;
-  font-size:12px;
-  margin-top:2px
-}
-
-.admin-hint{
-  display:block;
-  text-align:center;
-  margin-top:12px;
-  font-size:9.5px;
-  color:#5c6c88;
-  text-decoration:none
-}
-
-.terms-notice{
-  text-align:center;
-  margin-top:16px;
-  padding-top:14px;
-  border-top:1px solid var(--border);
-  font-size:9.5px;
-  line-height:1.6;
-  color:#5c6c88
-}
-
-.terms-notice a{
-  color:#8aa2bf;
-  text-decoration:underline
-}
-
-.terms-notice a:hover{color:var(--brand)}
-
-.admin-hint:hover{color:#93a2bf}
-
-.auth-divider{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin:16px 0 12px;
-  color:#5c6c88;
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.5px
-}
-
-.auth-divider::before,
-.auth-divider::after{
-  content:"";
-  flex:1;
-  height:1px;
-  background:var(--border)
-}
-
-.auth-guest{
-  display:block;
-  width:100%;
-  box-sizing:border-box;
-  text-align:center;
-  text-decoration:none;
-  padding:12px;
-  font:600 12px Inter,sans-serif;
-  color:#cfe9e1;
-  background:transparent;
-  border:1px solid rgba(79,224,179,.4);
-  border-radius:10px;
-  transition:.2s
-}
-
-.auth-guest:hover{
-  background:rgba(79,224,179,.1);
-  border-color:rgba(79,224,179,.7)
-}
-
-@media(max-width:900px){
-
-  .landing-main{
-    grid-template-columns:1fr
-  }
-
-  .auth-card{
-    position:static
-  }
-}
-
-/* ---------------- painel admin ---------------- */
-
-.admin-page{
-  position:relative;
-  z-index:2;
-  min-height:100vh
-}
-
-.admin-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:22px 32px;
-  border-bottom:1px solid var(--border)
-}
-
-.admin-header-brand{
-  display:flex;
-  align-items:center;
-  gap:14px
-}
-
-.admin-header-brand img{
-  width:52px;
-  object-fit:contain
-}
-
-.admin-header-brand strong{
-  display:block;
-  font:600 14px "Space Grotesk",sans-serif
-}
-
-.admin-header-brand small{
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-  margin-top:2px
-}
-
-.admin-main{
-  max-width:1180px;
-  margin:0 auto;
-  padding:26px 32px 60px
-}
-
-.admin-stats{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:10px;
-  margin-bottom:20px
-}
-
-.admin-stats>div{
-  background:linear-gradient(145deg,rgba(12,39,67,.82),rgba(5,27,49,.76));
-  border:1px solid var(--border);
-  border-radius:11px;
-  padding:14px;
-  text-align:center
-}
-
-.admin-stats strong{
-  display:block;
-  font:600 20px "Space Grotesk",sans-serif
-}
-
-.admin-stats small{
-  display:block;
-  color:var(--muted);
-  font-size:8.5px;
-  margin-top:4px
-}
-
-.admin-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-  margin-bottom:14px
-}
-
-.admin-card{
-  background:linear-gradient(145deg,rgba(12,39,67,.82),rgba(5,27,49,.76));
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:18px
-}
-
-.admin-bars{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-top:6px
-}
-
-.admin-bar-row{
-  display:grid;
-  grid-template-columns:110px 1fr 30px;
-  align-items:center;
-  gap:10px;
-  font-size:10px;
-  color:#b5c1d4
-}
-
-.admin-bar-track{
-  height:6px;
-  background:rgba(255,255,255,.07);
-  border-radius:99px;
-  overflow:hidden
-}
-
-.admin-bar-track span{
-  display:block;
-  height:100%;
-  background:linear-gradient(90deg,var(--brand),#6bceb4)
-}
-
-.admin-empty{
-  color:var(--muted);
-  font-size:10px;
-  padding:8px 0
-}
-
-.admin-table-card{overflow:hidden}
-
-.admin-table-wrap{
-  overflow-x:auto;
-  margin-top:8px
-}
-
-.admin-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:10.5px;
-  min-width:820px
-}
-
-.admin-table th{
-  text-align:left;
-  color:#8aa2bf;
-  font-weight:600;
-  text-transform:uppercase;
-  font-size:8.5px;
-  letter-spacing:.5px;
-  padding:9px 10px;
-  border-bottom:1px solid var(--border)
-}
-
-.admin-table td{
-  padding:9px 10px;
-  border-bottom:1px solid rgba(255,255,255,.05);
-  color:#d7dfed
-}
-
-.admin-table tr:hover td{
-  background:rgba(79,224,179,.03)
-}
-
-/* ---------------- login: link "Sair" ---------------- */
-
-.sidebar-logout{
-  display:inline-block;
-  margin-top:12px;
-  font-size:11px;
-  font-weight:600;
-  letter-spacing:.5px;
-  color:#cfe0f2;
-  text-decoration:none;
-  border:1px solid rgba(79,224,179,.45);
-  border-radius:99px;
-  padding:7px 18px;
-  transition:.2s
-}
-
-.sidebar-logout:hover{
-  color:#fff;
-  border-color:rgba(79,224,179,.35);
-  background:rgba(79,224,179,.06)
-}
-
-/* ---- novo sistema de metas ---- */
-
-.monthly-goal{
-  border-color:rgba(247,189,106,.45);
-  margin-bottom:14px
-}
-
-.weekly-block{
-  margin-bottom:18px;
-  padding-left:2px
-}
-
-.weekly-block .weekly-goal{
-  margin-bottom:10px
-}
-
-.goal.locked-card{
-  opacity:.55;
-  cursor:default
-}
-
-.goal.locked-card:hover{
-  border-color:var(--border);
-  box-shadow:none
-}
-
-.day-group{
-  margin:8px 0 8px 14px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:8px 12px;
-  background:rgba(6,27,48,.5)
-}
-
-.day-group summary{
-  cursor:pointer;
-  font:600 10px Space Grotesk,sans-serif;
-  color:var(--sun);
-  padding:4px 0
-}
-
-.day-group .goal-list{margin-top:8px}
-
-.archive-section{
-  margin-top:22px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:14px 16px;
-  background:rgba(6,27,48,.5)
-}
-
-.archive-section summary{
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font:600 11px Space Grotesk,sans-serif;
-  color:var(--muted);
-  list-style:none
-}
-
-.archive-section summary::-webkit-details-marker{display:none}
-
-.archive-section summary::before{
-  content:"▸";
-  color:var(--muted);
-  transition:.2s
-}
-
-.archive-section[open] summary::before{transform:rotate(90deg)}
-
-.archive-section[open] summary{color:var(--sun)}
-
-.archive-count{
-  margin-left:auto;
-  font:600 9px Space Grotesk,sans-serif;
-  color:var(--muted);
-  background:rgba(255,255,255,.06);
-  padding:2px 9px;
-  border-radius:20px
-}
-
-.archive-list{
-  margin-top:14px;
-  max-height:420px;
-  overflow-y:auto;
-  padding-right:4px
-}
-
-.goal.archived{opacity:.55}
-
-.goal.archived .goal-content strong{
-  text-decoration:line-through;
-  color:#7f8ca5
-}
-
-.goal.archived .goal-check{
-  background:var(--sun);
-  border-color:var(--sun)
-}
-
-.talk-menu-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  max-width:820px;
-  margin:0 auto
-}
-
-.talk-menu-card{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  text-decoration:none;
-  color:inherit;
-  cursor:pointer;
-  transition:.2s
-}
-
-.talk-menu-card:hover{
-  border-color:rgba(79,224,179,.4);
-  box-shadow:0 0 18px rgba(79,224,179,.1)
-}
-
-.talk-menu-emoji{font-size:26px}
-
-.talk-menu-card strong{
-  font:600 12px Space Grotesk,sans-serif
-}
-
-.talk-menu-card small{
-  color:var(--muted);
-  font-size:10px;
-  line-height:1.4
-}
-
-@media(max-width:760px){
-  .talk-menu-grid{
-    grid-template-columns:1fr
-  }
-}
-
-/* ---------------- Voluntariado: chat com avatar, áreas e resultado ---------------- */
-.chat-header{
-  display:flex;align-items:center;gap:11px;padding:4px 4px 14px;
-  border-bottom:1px solid var(--border);margin-bottom:13px
-}
-.chat-header-avatar{
-  width:38px;height:38px;border-radius:50%;object-fit:cover;
-  border:1px solid rgba(79,224,179,.3);background:rgba(79,224,179,.08)
-}
-.chat-header strong{display:block;font:600 12px "Space Grotesk",sans-serif}
-.chat-header small{display:block;color:var(--muted);font-size:9px;margin-top:2px}
-
-.volunteer-areas-box{
-  border:1px solid var(--border);border-radius:12px;padding:14px;
-  margin-bottom:13px;background:rgba(255,255,255,.02)
-}
-.volunteer-areas-box .interest-grid{grid-template-columns:repeat(3,1fr);margin:12px 0 8px}
-.volunteer-areas-box .interest-option label{padding:9px;font-size:9px}
-.volunteer-areas-hint{display:block;color:var(--muted);font-size:9px;line-height:1.5}
-
-.volunteer-areas-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}
-.volunteer-areas-tags span{
-  border:1px solid rgba(79,224,179,.18);color:var(--brand);
-  border-radius:999px;padding:5px 10px;font-size:8px
-}
-
-.volunteer-outcome-box{
-  border-top:1px solid var(--border);margin-top:14px;padding-top:14px
-}
-.volunteer-outcome-options{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.volunteer-outcome-box textarea{
-  width:100%;box-sizing:border-box;background:rgba(255,255,255,.04);border:1px solid var(--border);
-  border-radius:9px;padding:10px;color:#fff;font:11px Inter,sans-serif;resize:vertical
-}
-
-.volunteer-panel-tabs{display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--border)}
-.volunteer-panel-tab{
-  background:none;border:none;color:var(--muted);cursor:pointer;
-  padding:9px 14px;font:600 11px "Space Grotesk",sans-serif;border-bottom:2px solid transparent
-}
-.volunteer-panel-tab span{color:var(--muted);font-weight:500}
-.volunteer-panel-tab.active{color:var(--brand);border-bottom-color:var(--brand)}
-.volunteer-panel-tab.active span{color:var(--brand)}
-
-.volunteer-conversation-grid{display:grid;gap:16px}
-.volunteer-conversation{
-  border:1px solid var(--border);border-radius:14px;padding:16px;background:rgba(8,31,52,.72);
-  display:grid;gap:12px;
-  min-width:0;
-  overflow-wrap:anywhere;word-break:break-word
-}
-.volunteer-conv-log{max-height:280px}
-.volunteer-conv-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
-.volunteer-conv-actions .volunteer-close-form{flex:1;min-width:220px}
-
-/* ---------------- interesses, voluntariado e formulários do admin ---------------- */
-
-.interest-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:18px 0
-}
-.interest-option{position:relative}
-.interest-option input{position:absolute;opacity:0}
-.interest-option label{
-  display:block;padding:13px;border:1px solid var(--border);border-radius:11px;
-  color:#dce5f5;cursor:pointer;font:600 10px "Space Grotesk",sans-serif
-}
-.interest-option input:checked + label{
-  border-color:var(--brand);background:rgba(79,224,179,.1);color:var(--brand)
-}
-.volunteer-login-page,.volunteer-panel-page{
-  min-height:100vh;padding:32px;position:relative;z-index:1;
-}
-.volunteer-auth-card{
-  width:min(430px,100%);margin:70px auto;padding:28px;border:1px solid var(--border);
-  border-radius:18px;background:rgba(8,31,52,.78);box-shadow:var(--shadow)
-}
-.volunteer-auth-card h1{font:600 24px "Space Grotesk",sans-serif;margin-bottom:8px}
-.volunteer-auth-card p{color:var(--muted);font-size:11px;line-height:1.5}
-.volunteer-auth-form{display:grid;gap:12px;margin-top:20px}
-.volunteer-auth-form label{display:grid;gap:5px;color:#cfd8e9;font-size:9px}
-.volunteer-auth-form input,.volunteer-close-form textarea{
-  width:100%;box-sizing:border-box;background:rgba(255,255,255,.04);border:1px solid var(--border);
-  border-radius:9px;padding:10px;color:#fff;font:11px Inter,sans-serif
-}
-.volunteer-panel-page{max-width:1200px;margin:auto}
-.volunteer-panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
-.volunteer-ticket-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.volunteer-ticket{
-  border:1px solid var(--border);border-radius:14px;padding:16px;background:rgba(8,31,52,.72)
-}
-.volunteer-ticket.critical{border-color:rgba(255,110,110,.4)}
-.volunteer-ticket h3{font:600 14px "Space Grotesk",sans-serif;margin-bottom:7px}
-.volunteer-ticket .urgency{font-size:8px;letter-spacing:1px;color:var(--sun);text-transform:uppercase}
-.volunteer-ticket .description{font-size:11px;line-height:1.6;color:#dce5f5;margin:10px 0 14px;overflow-wrap:anywhere;word-break:break-word}
-.volunteer-close-form{display:grid;gap:8px}
-.volunteer-history{margin-top:26px}
-.volunteer-history table{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed}
-.volunteer-history th,.volunteer-history td{padding:9px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top;overflow-wrap:anywhere;word-break:break-word}
-@media(max-width:800px){
-  .volunteer-ticket-grid{grid-template-columns:1fr}
-  .interest-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:520px){
-  .interest-grid{grid-template-columns:1fr}
-  .volunteer-login-page,.volunteer-panel-page{padding:18px}
-}
-
-.admin-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.admin-form-grid input{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:9px;color:#fff}.admin-form-grid button{grid-column:1/-1}
-@media(max-width:700px){.admin-form-grid{grid-template-columns:1fr}}
-
-/* ================================================================
-   RODAPÉ DA LANDING
-   ================================================================ */
-
-.landing-footer{
-  position:relative;
-  z-index:2;
-
-  width:100%;
-  max-width:1180px;
-
-  margin:0 auto;
-  padding:32px 28px;
-
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:40px;
-
-  border-top:1px solid var(--border);
-  box-sizing:border-box;
-}
-
-
-.landing-footer-column{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-
-
-.landing-footer-column h2{
-  margin:0 0 6px;
-
-  font:600 11px "Space Grotesk",sans-serif;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-
-  color:#fff;
-}
-
-
-.landing-footer-column p{
-  margin:0;
-
-  font:400 11px/1.6 Inter,sans-serif;
-  color:var(--muted);
-}
-
-
-.landing-footer-column a{
-  width:max-content;
-
-  font:400 11px/1.6 Inter,sans-serif;
-  color:var(--brand);
-
-  text-decoration:none;
-}
-
-
-.landing-footer-column a:hover{
-  text-decoration:underline;
-}
-
-
-.landing-footer-info{
-  align-items:flex-end;
-  justify-content:flex-end;
-  text-align:right;
-}
-
-
-.landing-footer-info strong{
-  color:#fff;
-  font-weight:500;
-}
-
-
-/* ---------------- responsividade do rodapé ---------------- */
-
-@media(max-width:700px){
-
-  .landing-footer{
-    grid-template-columns:1fr;
-    gap:24px;
-    padding:28px 20px;
-
-    text-align:center;
-  }
-
-  .landing-footer-column{
-    align-items:center;
-  }
-
-  .landing-footer-info{
-    align-items:center;
-    text-align:center;
-  }
-
-  .landing-footer-column a{
-    width:auto;
-  }
-
-}
+"""
+RASTRO — dados e regras do TALK/1%/WORLD.
+
+Constantes e funções puras usadas para interpretar as respostas do TALK,
+montar as metas do 1% e calcular o progresso do WORLD. Sem estado de usuário
+aqui — isso está no banco (models.py).
+"""
+
+WORLD_ELEMENTS = [
+    (0, "🏡", "Um espaço que já é seu"),
+    (30, "🌊", "Um lago calmo pra respirar"),
+    (50, "🪑", "Um banco pra descansar"),
+    (75, "🌳", "Uma barreira atravessada"),
+    (100, "🌳", "Uma nova marca florescendo"),
+]
+
+WORLD_ELEMENT_MESSAGES = {
+    0: "Você não precisa ter tudo planejado para começar. O importante é dar o primeiro passo e confiar que cada avanço te levará mais perto do seu objetivo.",
+    30: "Nem tudo precisa ser feito com pressa. Às vezes, o avanço também é parar, respirar e continuar depois.",
+    50: "Olhar pra trás e ver o quanto você já andou também é progresso.",
+    75: "Você enfrentou aquilo que um dia parecia difícil demais. Essa conquista prova que seus limites podem ser apenas o começo de algo maior.",
+    100: "Você foi além do que já tinha feito — essa marca é a prova disso.",
+}
+
+# ---------------- TROCA DE PONTOS: recompensas disponíveis ----------------
+BENEFITS = [
+    {"id": "gympass", "emoji": "🏋️", "label": "Wellhub (Gympass)", "cost": 500, "description": "Benefício de atividade física por parceiro."},
+    {"id": "terapia", "emoji": "🧠", "label": "Sessão de terapia", "cost": 800, "description": "Crédito para uma sessão com profissional parceiro."},
+    {"id": "nutricionista", "emoji": "🥗", "label": "Consulta com nutricionista", "cost": 700, "description": "Crédito para atendimento nutricional parceiro."},
+    {"id": "meditacao", "emoji": "🧘", "label": "App de meditação", "cost": 300, "description": "Acesso promocional a um aplicativo de meditação."},
+    {"id": "farmacia", "emoji": "💊", "label": "Vale-farmácia", "cost": 600, "description": "Crédito promocional para compras em farmácia parceira."},
+]
+
+# Mantido para compatibilidade com versões anteriores do protótipo.
+REWARDS = [
+    {"id": "sementes", "emoji": "🌱", "label": "Sementes", "cost": 50},
+    {"id": "decoracoes", "emoji": "🏡", "label": "Decorações", "cost": 80},
+    {"id": "movimentos", "emoji": "🐦", "label": "Movimentos", "cost": 100},
+    {"id": "flores", "emoji": "🌸", "label": "Flores", "cost": 60},
+    {"id": "itens-especiais", "emoji": "🎁", "label": "Itens especiais", "cost": 150},
+]
+
+MOOD_OPTIONS = ["muito mal", "mal", "mais ou menos", "bem", "muito bem"]
+
+OBJECTIVE_RULES = {
+    "estudos": ["estud", "enem", "prova", "faculdade", "matéria", "lição", "escola", "vestibular", "nota"],
+    "trabalho": ["emprego", "trabalh", "vaga", "currículo", "entrevista", "estágio", "carreira", "chefe"],
+    "dinheiro": ["dinheiro", "gasto", "gastar", "econom", "guardar", "dívida", "financeir", "salário", "orçamento"],
+    "rotina": ["rotina", "organizar", "organiza", "horário", "tempo", "casa", "quarto", "tarefas", "procrastin"],
+    "projeto pessoal": ["projeto", "ideia", "criar", "aprender", "curso", "hobby", "portfólio", "empreender"],
+    "relações": ["amigo", "amizade", "família", "famili", "namoro", "relacion", "sozinh", "conversar com alguém"],
+    "bem-estar": ["cansad", "sono", "dormir", "exerc", "aliment", "energia", "descans", "ansios", "estress", "estresse"],
+}
+
+BARRIER_RULES = {
+    "não sei por onde começar": ["não sei por onde", "perdid", "não sei como", "não sei o que fazer", "sem direção", "por onde", "não sei começar"],
+    "falta de tempo": ["sem tempo", "não tenho tempo", "tempo", "correria", "horário", "ocupad"],
+    "distração": ["celular", "distra", "instagram", "tiktok", "procrastin", "não consigo focar", "foco"],
+    "tarefa parece grande demais": ["muita coisa", "grande demais", "sobrecarreg", "não dou conta", "coisa demais", "tudo ao mesmo tempo", "complicado"],
+    "falta de energia": ["cansad", "sem energia", "exaust", "esgot", "sem força", "sono", "desanim"],
+    "medo de não conseguir": ["medo", "fracass", "não vou conseguir", "não sou capaz", "insegur", "vergonha"],
+    "preciso de companhia": ["sozinh", "solidão", "ninguém", "isolad", "não tenho com quem", "companhia"],
+}
+
+BARRIER_OPTIONS = [
+    "não sei por onde começar",
+    "falta de tempo",
+    "distração",
+    "tarefa parece grande demais",
+    "falta de energia",
+    "medo de não conseguir",
+    "preciso de companhia",
+]
+
+GOAL_TEMPLATES = {
+    "estudos": {
+        "não sei por onde começar": [
+            ("Abrir o material e escolher apenas uma questão", "começo"),
+            ("Ler o enunciado da primeira questão", "foco"),
+            ("Estudar por 10 minutos sem exigir terminar", "progresso"),
+        ],
+        "falta de tempo": [
+            ("Reservar 10 minutos para uma única matéria", "tempo"),
+            ("Escolher a tarefa mais importante do dia", "prioridade"),
+            ("Encerrar os 10 minutos registrando o que avançou", "progresso"),
+        ],
+        "distração": [
+            ("Deixar o celular longe por 10 minutos", "foco"),
+            ("Abrir somente o material que você vai usar", "ambiente"),
+            ("Fazer uma questão antes de olhar outra tela", "começo"),
+        ],
+        "tarefa parece grande demais": [
+            ("Dividir o conteúdo em uma única questão", "começo"),
+            ("Estudar só a primeira parte, sem tentar terminar tudo", "ação"),
+            ("Marcar o que você conseguiu entender", "progresso"),
+        ],
+        "falta de energia": [
+            ("Beber água e fazer uma pausa curta", "corpo"),
+            ("Escolher uma tarefa de estudo que leve 5 minutos", "energia"),
+            ("Parar depois do primeiro pequeno avanço se precisar", "cuidado"),
+        ],
+        "medo de não conseguir": [
+            ("Escolher uma questão fácil para começar", "coragem"),
+            ("Tentar por 5 minutos sem buscar perfeição", "tentativa"),
+            ("Anotar uma coisa que você descobriu tentando", "reflexão"),
+        ],
+        "preciso de companhia": [
+            ("Mandar mensagem para alguém para estudar junto", "conexão"),
+            ("Combinar 15 minutos de estudo acompanhado", "companhia"),
+            ("Contar depois o que você conseguiu fazer", "progresso"),
+        ],
+    },
+    "trabalho": {
+        "não sei por onde começar": [
+            ("Abrir uma única vaga compatível com você", "começo"),
+            ("Anotar uma habilidade que você já possui", "clareza"),
+            ("Dar um pequeno passo no currículo", "ação"),
+        ],
+        "falta de tempo": [
+            ("Separar 10 minutos para procurar uma vaga", "tempo"),
+            ("Escolher apenas uma plataforma para olhar hoje", "prioridade"),
+            ("Salvar uma oportunidade interessante", "progresso"),
+        ],
+        "distração": [
+            ("Abrir somente a página de vagas que você escolheu", "foco"),
+            ("Pesquisar por 10 minutos sem alternar de aplicativo", "foco"),
+            ("Salvar uma vaga antes de sair", "ação"),
+        ],
+        "tarefa parece grande demais": [
+            ("Escrever apenas o título do seu currículo", "começo"),
+            ("Escolher três habilidades para destacar", "ação"),
+            ("Revisar uma única parte do currículo", "progresso"),
+        ],
+        "falta de energia": [
+            ("Fazer uma pausa e beber água antes de começar", "cuidado"),
+            ("Escolher uma tarefa profissional de 5 minutos", "energia"),
+            ("Encerrar quando o pequeno passo estiver concluído", "limite"),
+        ],
+        "medo de não conseguir": [
+            ("Encontrar uma vaga em que você cumpra parte dos requisitos", "coragem"),
+            ("Escrever uma frase sobre o que você sabe fazer", "confiança"),
+            ("Salvar a vaga sem se obrigar a enviar hoje", "tentativa"),
+        ],
+        "preciso de companhia": [
+            ("Pedir para alguém revisar uma parte do seu currículo", "conexão"),
+            ("Conversar com alguém sobre uma área que interessa", "companhia"),
+            ("Registrar uma dica que recebeu", "progresso"),
+        ],
+    },
+    "dinheiro": {
+        "não sei por onde começar": [
+            ("Registrar um único gasto de hoje", "começo"),
+            ("Anotar quanto entrou e quanto saiu este mês", "clareza"),
+            ("Escolher uma pequena despesa para observar", "consciência"),
+        ],
+        "falta de tempo": [
+            ("Separar 5 minutos para registrar seus gastos", "tempo"),
+            ("Anotar apenas as três últimas compras", "prioridade"),
+            ("Escolher um gasto para acompanhar esta semana", "progresso"),
+        ],
+        "distração": [
+            ("Abrir sua lista de gastos antes de qualquer rede social", "foco"),
+            ("Registrar uma compra assim que ela acontecer", "atenção"),
+            ("Fechar o aplicativo depois de completar o registro", "limite"),
+        ],
+        "tarefa parece grande demais": [
+            ("Anotar somente os gastos de hoje", "começo"),
+            ("Separar gastos em duas categorias", "clareza"),
+            ("Escolher uma categoria para observar", "progresso"),
+        ],
+        "falta de energia": [
+            ("Fazer uma pausa e depois registrar apenas um gasto", "cuidado"),
+            ("Escolher a parte mais simples do orçamento", "energia"),
+            ("Parar depois de organizar uma única informação", "limite"),
+        ],
+        "medo de não conseguir": [
+            ("Escolher uma pequena economia possível esta semana", "coragem"),
+            ("Registrar sem julgamento um gasto que aconteceu", "consciência"),
+            ("Anotar uma mudança que seria realista", "progresso"),
+        ],
+        "preciso de companhia": [
+            ("Conversar com alguém de confiança sobre uma meta financeira", "conexão"),
+            ("Pedir ajuda para organizar uma categoria", "companhia"),
+            ("Anotar uma dica que recebeu", "progresso"),
+        ],
+    },
+    "rotina": {
+        "não sei por onde começar": [
+            ("Escolher uma única tarefa para hoje", "começo"),
+            ("Colocar essa tarefa em um horário específico", "clareza"),
+            ("Fazer só os primeiros 5 minutos", "ação"),
+        ],
+        "falta de tempo": [
+            ("Escolher uma tarefa que caiba em 10 minutos", "tempo"),
+            ("Bloquear 10 minutos no seu horário", "prioridade"),
+            ("Deixar o próximo passo preparado", "progresso"),
+        ],
+        "distração": [
+            ("Deixar o celular fora do alcance por 10 minutos", "foco"),
+            ("Começar uma tarefa antes de abrir outra tela", "começo"),
+            ("Usar um cronômetro de 10 minutos", "atenção"),
+        ],
+        "tarefa parece grande demais": [
+            ("Escolher apenas uma parte da tarefa", "começo"),
+            ("Fazer a menor ação possível", "ação"),
+            ("Parar para reconhecer o que já mudou", "progresso"),
+        ],
+        "falta de energia": [
+            ("Escolher uma tarefa que leve 5 minutos", "energia"),
+            ("Beber água e fazer uma pausa curta", "cuidado"),
+            ("Deixar uma tarefa pronta para amanhã", "continuidade"),
+        ],
+        "medo de não conseguir": [
+            ("Criar uma versão pequena da rotina", "coragem"),
+            ("Testar a nova rotina por apenas um dia", "tentativa"),
+            ("Anotar o que funcionou", "reflexão"),
+        ],
+        "preciso de companhia": [
+            ("Convidar alguém para fazer a tarefa junto", "conexão"),
+            ("Contar a alguém qual pequena tarefa você quer concluir", "companhia"),
+            ("Compartilhar depois que terminou", "progresso"),
+        ],
+    },
+    "projeto pessoal": {
+        "não sei por onde começar": [
+            ("Escrever em uma frase o que você quer criar", "clareza"),
+            ("Escolher a primeira ação do projeto", "começo"),
+            ("Trabalhar nele por 10 minutos", "ação"),
+        ],
+        "falta de tempo": [
+            ("Separar 10 minutos para o projeto", "tempo"),
+            ("Escolher uma única entrega pequena", "prioridade"),
+            ("Salvar o próximo passo para continuar depois", "progresso"),
+        ],
+        "distração": [
+            ("Abrir somente a ferramenta do projeto", "foco"),
+            ("Trabalhar por 10 minutos sem alternar de aplicativo", "atenção"),
+            ("Salvar o que foi feito", "progresso"),
+        ],
+        "tarefa parece grande demais": [
+            ("Transformar o projeto em uma tarefa de 5 minutos", "começo"),
+            ("Fazer apenas a primeira parte", "ação"),
+            ("Registrar o que já existe", "progresso"),
+        ],
+        "falta de energia": [
+            ("Escolher uma parte leve do projeto", "energia"),
+            ("Fazer uma pausa curta antes de começar", "cuidado"),
+            ("Encerrar após um pequeno avanço", "limite"),
+        ],
+        "medo de não conseguir": [
+            ("Criar uma versão simples do projeto", "coragem"),
+            ("Testar uma ideia sem exigir que fique perfeita", "tentativa"),
+            ("Anotar o que aprendeu", "reflexão"),
+        ],
+        "preciso de companhia": [
+            ("Mostrar a ideia para alguém de confiança", "conexão"),
+            ("Pedir uma opinião sobre o primeiro passo", "companhia"),
+            ("Registrar uma sugestão útil", "progresso"),
+        ],
+    },
+    "relações": {
+        "não sei por onde começar": [
+            ("Escrever o que você gostaria de conseguir dizer", "clareza"),
+            ("Escolher uma pessoa segura para conversar", "conexão"),
+            ("Enviar uma mensagem curta e honesta", "ação"),
+        ],
+        "falta de tempo": [
+            ("Separar 5 minutos para responder alguém importante", "tempo"),
+            ("Mandar uma mensagem simples", "conexão"),
+            ("Marcar um momento para conversar depois", "progresso"),
+        ],
+        "distração": [
+            ("Guardar o celular e ouvir alguém por 10 minutos", "presença"),
+            ("Responder uma pessoa sem alternar aplicativos", "foco"),
+            ("Fazer uma pergunta e realmente escutar", "conexão"),
+        ],
+        "tarefa parece grande demais": [
+            ("Escolher apenas uma coisa que você quer dizer", "começo"),
+            ("Escrever uma frase sem enviar ainda", "clareza"),
+            ("Decidir se vale continuar a conversa", "limite"),
+        ],
+        "falta de energia": [
+            ("Dar um pequeno espaço para descansar antes de conversar", "cuidado"),
+            ("Enviar uma mensagem simples em vez de explicar tudo", "energia"),
+            ("Escolher o momento em que você se sente mais disponível", "limite"),
+        ],
+        "medo de não conseguir": [
+            ("Escrever primeiro o que você gostaria que a pessoa entendesse", "coragem"),
+            ("Usar uma frase começando por 'eu sinto...'", "clareza"),
+            ("Escolher se quer conversar agora ou depois", "limite"),
+        ],
+        "preciso de companhia": [
+            ("Enviar mensagem para alguém de confiança", "conexão"),
+            ("Pedir companhia para uma atividade simples", "companhia"),
+            ("Agradecer a pessoa que esteve presente", "progresso"),
+        ],
+    },
+    "bem-estar": {
+        "não sei por onde começar": [
+            ("Escolher uma coisa simples que faria seu dia um pouco melhor", "começo"),
+            ("Fazer essa ação por 5 minutos", "ação"),
+            ("Anotar como você se sentiu depois", "reflexão"),
+        ],
+        "falta de tempo": [
+            ("Separar 5 minutos para você hoje", "tempo"),
+            ("Escolher uma pausa curta que realmente ajude", "cuidado"),
+            ("Deixar a próxima pausa marcada", "progresso"),
+        ],
+        "distração": [
+            ("Ficar 10 minutos sem alternar entre aplicativos", "foco"),
+            ("Deixar o celular longe durante uma pausa", "presença"),
+            ("Perceber o que você estava procurando ao abrir o celular", "consciência"),
+        ],
+        "tarefa parece grande demais": [
+            ("Escolher uma mudança pequena em vez de mudar tudo", "começo"),
+            ("Fazer só 5 minutos hoje", "ação"),
+            ("Reconhecer o que já foi possível", "progresso"),
+        ],
+        "falta de energia": [
+            ("Beber água e fazer uma pausa curta", "corpo"),
+            ("Escolher uma ação que exija pouca energia", "energia"),
+            ("Permitir que o pequeno passo seja suficiente hoje", "cuidado"),
+        ],
+        "medo de não conseguir": [
+            ("Escolher uma mudança tão pequena que pareça possível", "coragem"),
+            ("Testar por um dia, sem promessa de perfeição", "tentativa"),
+            ("Anotar o que funcionou", "reflexão"),
+        ],
+        "preciso de companhia": [
+            ("Pensar em alguém com quem você se sente seguro", "conexão"),
+            ("Enviar uma mensagem simples pedindo companhia", "companhia"),
+            ("Registrar como foi receber apoio", "reflexão"),
+        ],
+    },
+}
+
+PATTERNS = {
+    "não sei por onde começar": "Você parece avançar melhor quando transforma algo grande em um primeiro passo pequeno.",
+    "falta de tempo": "Você pode se beneficiar de ações curtas e específicas, em vez de esperar por um bloco perfeito de tempo.",
+    "distração": "Seu desafio parece estar menos na vontade e mais em proteger sua atenção no momento de começar.",
+    "tarefa parece grande demais": "Quando algo parece enorme, dividir em partes pequenas pode tornar o começo mais possível.",
+    "falta de energia": "Você parece se beneficiar de passos curtos que respeitam sua energia, em vez de tentar fazer tudo de uma vez.",
+    "medo de não conseguir": "Você pode avançar melhor quando troca a cobrança de acertar pela liberdade de apenas tentar.",
+    "preciso de companhia": "Ter alguém por perto pode tornar alguns próximos passos mais possíveis para você.",
+}
+
+
+def detect_objective(text):
+    normalized = (text or "").lower()
+    for objective, keywords in OBJECTIVE_RULES.items():
+        if any(keyword in normalized for keyword in keywords):
+            return objective
+    return "projeto pessoal"
+
+
+def detect_barrier(text):
+    normalized = (text or "").lower()
+    for barrier, keywords in BARRIER_RULES.items():
+        if any(keyword in normalized for keyword in keywords):
+            return barrier
+    return "não sei por onde começar"
+
+
+def build_goals(objective, barrier):
+    templates = GOAL_TEMPLATES.get(objective, GOAL_TEMPLATES["projeto pessoal"])
+    return [
+        {"id": index + 1, "text": text, "tag": tag, "done": False}
+        for index, (text, tag) in enumerate(
+            templates.get(barrier, templates["não sei por onde começar"])
+        )
+    ]
+
+
+# ==================== CICLO MENSAL (mensal/semanal/diário) — fallback sem IA ====================
+# Usado quando não há ANTHROPIC_API_KEY configurada ou a chamada à API falha.
+# Gera um bloco completo (1 mensal + 4 semanais + 140 diárias) a partir dos
+# mesmos templates do objetivo/barreira detectados no TALK, só que expandido.
+
+MONTHLY_GOAL_TEMPLATES = {
+    "estudos": "Chegar ao fim do mês com uma rotina de estudo que você consiga manter, mesmo nos dias difíceis.",
+    "trabalho": "Dar passos consistentes rumo a uma nova oportunidade de trabalho ou uma melhora real na atual.",
+    "dinheiro": "Construir uma relação mais organizada e menos ansiosa com o seu dinheiro ao longo do mês.",
+    "rotina": "Montar uma rotina que funcione pra você, não uma rotina perfeita.",
+    "projeto pessoal": "Avançar de forma constante no seu projeto, saindo da ideia para algo concreto.",
+    "relações": "Fortalecer uma relação importante, com pequenas ações de presença e honestidade.",
+    "bem-estar": "Cuidar do seu bem-estar com ações pequenas e sustentáveis, não com mudanças radicais.",
+}
+
+WEEKLY_GOAL_TEMPLATES = {
+    "não sei por onde começar": [
+        "Descobrir, na prática, qual é o seu primeiro passo real.",
+        "Repetir o primeiro passo até ele parar de dar tanto medo.",
+        "Dar um passo um pouco maior que o da semana passada.",
+        "Olhar pra trás e organizar o que já foi possível até aqui.",
+    ],
+    "falta de tempo": [
+        "Encontrar os 10 minutos que realmente cabem na sua rotina.",
+        "Proteger esses 10 minutos mesmo numa semana corrida.",
+        "Aumentar um pouco o tempo dedicado, sem se cobrar demais.",
+        "Ver quanto essa rotina pequena já rendeu no mês.",
+    ],
+    "distração": [
+        "Criar um ambiente com menos chances de distração.",
+        "Perceber os gatilhos que tiram sua atenção e testar 1 ajuste.",
+        "Manter o foco por mais tempo seguido do que na semana passada.",
+        "Reconhecer o quanto sua atenção já está mais protegida.",
+    ],
+    "tarefa parece grande demais": [
+        "Quebrar o objetivo em pedaços realmente pequenos.",
+        "Concluir o primeiro pedaço inteiro, sem pular etapas.",
+        "Encarar um pedaço um pouco mais desafiador.",
+        "Juntar os pedaços e ver o quanto já formam um todo.",
+    ],
+    "falta de energia": [
+        "Descobrir o horário do dia em que você tem mais energia.",
+        "Aproveitar esse horário para o passo mais importante da semana.",
+        "Testar um ajuste pequeno pra sustentar essa energia por mais tempo.",
+        "Perceber o que mudou na sua disposição ao longo do mês.",
+    ],
+    "medo de não conseguir": [
+        "Tentar sem exigir que dê certo de primeira.",
+        "Repetir a tentativa, mesmo com o medo ainda presente.",
+        "Encarar uma tentativa um pouco mais exposta que a anterior.",
+        "Olhar pra trás e ver quantas vezes você tentou mesmo com medo.",
+    ],
+    "preciso de companhia": [
+        "Encontrar 1 pessoa com quem dividir esse processo.",
+        "Manter essa troca viva ao longo da semana.",
+        "Pedir apoio em algo um pouco mais difícil.",
+        "Agradecer e reconhecer quem esteve com você nesse mês.",
+    ],
+}
+
+
+WEEKLY_GOALS_PER_CYCLE_FALLBACK = 4
+
+
+def _daily_pool(objective, barrier):
+    """Junta os textos de metas diárias disponíveis pros templates existentes
+    e, se faltar variedade, completa repetindo com pequenas variações — sem
+    nunca deixar a lista vazia."""
+    templates = GOAL_TEMPLATES.get(objective, GOAL_TEMPLATES["projeto pessoal"])
+    base = templates.get(barrier, templates["não sei por onde começar"])
+    pool = [text for text, _tag in base]
+    if not pool:
+        pool = ["Dar um pequeno passo em direção ao seu objetivo hoje."]
+    return pool
+
+
+def build_full_cycle(objective, barrier):
+    """Monta o payload de um ciclo completo (mensal + 4 semanais + 140 diárias,
+    35 por semana / 5 por dia), no mesmo formato usado pelos rascunhos gerados
+    por IA — pra admin_dashboard poder aprovar os dois do mesmo jeito."""
+    monthly = MONTHLY_GOAL_TEMPLATES.get(objective, MONTHLY_GOAL_TEMPLATES["projeto pessoal"])
+    weekly = WEEKLY_GOAL_TEMPLATES.get(barrier, WEEKLY_GOAL_TEMPLATES["não sei por onde começar"])
+    pool = _daily_pool(objective, barrier)
+
+    daily_weeks = []
+    for week_index in range(WEEKLY_GOALS_PER_CYCLE_FALLBACK):
+        week_texts = []
+        for day in range(7):
+            for slot in range(5):
+                i = (week_index * 35) + (day * 5) + slot
+                base_text = pool[i % len(pool)]
+                # pequena variação pra não repetir o texto idêntico dentro da semana
+                cycle_pass = i // len(pool)
+                text = base_text if cycle_pass == 0 else f"{base_text} (dia {day + 1})"
+                week_texts.append(text)
+        daily_weeks.append(week_texts)
+
+    return {"monthly": monthly, "weekly": list(weekly), "daily": daily_weeks}
+
+
+def unlocked_elements(owned_costs):
+    """owned_costs: coleção com os custos (thresholds) dos itens do WORLD que
+    o usuário já obteve (ver models.WorldItem)."""
+    owned_costs = set(owned_costs)
+    return [(emoji, label) for cost, emoji, label in WORLD_ELEMENTS if cost in owned_costs]
+
+
+# ==================== VOLUNTARIADO: triagem por urgência ====================
+# ATENÇÃO: isto é uma triagem por palavras-chave, não um diagnóstico. Qualquer
+# sinal de risco iminente deve cair em "critica" e ser encaminhado ao CVV —
+# na dúvida, o sistema deve preferir classificar como mais urgente, nunca menos.
+
+CVV_MESSAGE = (
+    "Pelo que você escreveu, acho que nossos voluntários não têm o preparo "
+    "necessário para te ajudar com isso agora — e isso merece um cuidado "
+    "imediato. Por favor, ligue para o CVV: 188 (Centro de Valorização da "
+    "Vida), disponível 24h, gratuito e sigiloso. Se estiver em perigo agora, "
+    "ligue também para o 192 (SAMU) ou vá até o pronto-socorro mais próximo."
+)
+
+# áreas que o usuário pode marcar como relacionadas ao que está vivendo —
+# usado só para dar contexto ao voluntário/admin, não é diagnóstico.
+VOLUNTEER_TICKET_AREAS = {
+    "ansiedade": "Ansiedade",
+    "tristeza_depressao": "Tristeza / depressão",
+    "relacionamentos": "Relacionamentos",
+    "familia": "Família",
+    "escola_trabalho": "Escola / trabalho",
+    "autoestima": "Autoestima",
+    "luto": "Luto",
+    "saude_fisica": "Saúde física",
+    "alimentacao": "Alimentação",
+    "outro": "Outro",
+}
+
+VOLUNTEER_INTRO_MESSAGE = (
+    "Desabafe. Aqui é um local seguro e tudo o que disser será anonimizado. "
+    "Evite informar dados pessoais, a menos que seja de extrema necessidade "
+    "para o seu relato."
+)
+
+VOLUNTEER_WAIT_MESSAGE = (
+    "Em alguns instantes, um voluntário supervisionado irá analisar o seu "
+    "caso e te ajudar da maneira mais assertiva."
+)
+
+CRITICAL_KEYWORDS = [
+    "quero morrer", "quero me matar", "vou me matar", "não aguento mais viver",
+    "não quero mais viver", "acabar com tudo", "acabar com a minha vida",
+    "me machucar", "me cortar", "tirar minha vida", "sem motivo pra viver",
+    "melhor eu não existir", "pensando em suicídio", "suicídio", "suicidio",
+]
+
+HIGH_URGENCY_KEYWORDS = [
+    "crise", "desesperad", "pânico", "panico", "não consigo mais", "surto",
+    "em pânico", "muito mal", "não paro de chorar", "medo de mim mesmo",
+]
+
+MEDIUM_URGENCY_KEYWORDS = [
+    "ansios", "triste", "sozinh", "cansad", "sobrecarreg", "estress",
+    "não sei o que fazer", "confus",
+]
+
+
+VOLUNTEER_TICKET_AREAS = {
+    "ansiedade": "Ansiedade",
+    "tristeza_depressao": "Tristeza / depressão",
+    "relacionamentos": "Relacionamentos",
+    "familia": "Família",
+    "escola_trabalho": "Escola / trabalho",
+    "autoestima": "Autoestima",
+    "luto": "Luto",
+    "outro": "Outro",
+}
+
+VOLUNTEER_INTRO_MESSAGE = (
+    "Desabafe. Aqui é um local seguro e tudo o que disser será anonimizado. "
+    "Evite informar dados pessoais, a menos que seja de extrema necessidade "
+    "para o seu relato."
+)
+
+VOLUNTEER_WAIT_MESSAGE = (
+    "Em alguns instantes, um voluntário supervisionado irá analisar o seu "
+    "caso e te ajudar da maneira mais assertiva."
+)
+
+
+def classify_ticket_urgency(text):
+    """Retorna (urgency, is_crisis). is_crisis=True significa: não enfileirar
+    pra voluntário, encaminhar direto pro CVV."""
+    normalized = (text or "").lower()
+
+    if any(keyword in normalized for keyword in CRITICAL_KEYWORDS):
+        return "critica", True
+    if any(keyword in normalized for keyword in HIGH_URGENCY_KEYWORDS):
+        return "alta", False
+    if any(keyword in normalized for keyword in MEDIUM_URGENCY_KEYWORDS):
+        return "media", False
+    return "baixa", False
+
+
+# ==================== ESTATÍSTICAS DE INSATISFAÇÃO ====================
+
+SATISFACTION_CONTEXTS = ["escola", "empresa", "cidade", "outro"]
+
+SATISFACTION_REASON_TAGS = {
+    "escola": ["metodologia de ensino", "infraestrutura", "relação com colegas", "carga de provas/tarefas", "outro"],
+    "empresa": ["ambiente de trabalho", "carga horária", "salário/benefícios", "relação com liderança", "outro"],
+    "cidade": ["segurança", "transporte", "acesso a lazer/cultura", "custo de vida", "outro"],
+    "outro": ["outro"],
+}
+
+
+def world_progress(owned_costs, points):
+    owned_costs = set(owned_costs)
+    owned = len(owned_costs)
+    total = len(WORLD_ELEMENTS)
+    if owned >= total:
+        return 100, 0
+    locked_costs = sorted(cost for cost, *_ in WORLD_ELEMENTS if cost not in owned_costs)
+    next_cost = locked_costs[0]
+    return (owned / total) * 100, max(0, next_cost - points)
+
+
+
+
+# ---------------- MUNDO REAL ----------------
+WORLD_REAL_INTERESTS = {
+    "cinema": "Cinema",
+    "museus": "Museus",
+    "teatro": "Teatro",
+    "shows": "Shows e música",
+    "parques": "Parques e natureza",
+    "gastronomia": "Gastronomia",
+    "arte_urbana": "Arte urbana",
+    "esportes": "Esportes",
+    "livrarias": "Livrarias e literatura",
+    "cultura": "Centros culturais",
+}
+
+WORLD_REAL_PLACES = [
+    {
+        "id": "praca-liberdade",
+        "name": "Praça da Liberdade",
+        "category": "cultura",
+        "interests": ["museus", "parques", "arte_urbana", "cultura"],
+        "lat": -19.9321, "lng": -43.9378,
+        "description": "Conjunto cultural e espaço aberto no coração da região da Savassi.",
+    },
+    {
+        "id": "ccbb-bh",
+        "name": "CCBB Belo Horizonte",
+        "category": "museus",
+        "interests": ["museus", "teatro", "shows", "cultura"],
+        "lat": -19.9326, "lng": -43.9369,
+        "description": "Centro cultural com exposições, teatro e programação artística.",
+    },
+    {
+        "id": "palacio-das-artes",
+        "name": "Palácio das Artes",
+        "category": "teatro",
+        "interests": ["teatro", "shows", "cultura"],
+        "lat": -19.9247, "lng": -43.9362,
+        "description": "Complexo cultural com teatro, música, dança, cinema e artes visuais.",
+    },
+    {
+        "id": "parque-municipal",
+        "name": "Parque Municipal Américo Renné Giannetti",
+        "category": "parques",
+        "interests": ["parques", "esportes"],
+        "lat": -19.9245, "lng": -43.9334,
+        "description": "Área verde tradicional para caminhada, lazer e atividades ao ar livre.",
+    },
+    {
+        "id": "mercado-central",
+        "name": "Mercado Central de Belo Horizonte",
+        "category": "gastronomia",
+        "interests": ["gastronomia", "cultura"],
+        "lat": -19.9228, "lng": -43.9409,
+        "description": "Um dos principais pontos de gastronomia e cultura popular de BH.",
+    },
+    {
+        "id": "museu-pampulha",
+        "name": "Museu de Arte da Pampulha",
+        "category": "museus",
+        "interests": ["museus", "arte_urbana", "cultura", "parques"],
+        "lat": -19.8519, "lng": -43.9763,
+        "description": "Espaço de arte e arquitetura no conjunto da Pampulha.",
+    },
+    {
+        "id": "mineirao",
+        "name": "Mineirão",
+        "category": "esportes",
+        "interests": ["esportes", "shows"],
+        "lat": -19.8659, "lng": -43.9710,
+        "description": "Estádio e espaço de grandes eventos esportivos e musicais.",
+    },
+    {
+        "id": "mercado-novo",
+        "name": "Mercado Novo",
+        "category": "gastronomia",
+        "interests": ["gastronomia", "shows", "arte_urbana"],
+        "lat": -19.9227, "lng": -43.9442,
+        "description": "Espaço urbano com gastronomia, bares, criatividade e eventos.",
+    },
+    {
+        "id": "livraria-quixote",
+        "name": "Quixote Livraria e Café",
+        "category": "livrarias",
+        "interests": ["livrarias", "gastronomia", "cultura"],
+        "lat": -19.9360, "lng": -43.9364,
+        "description": "Livraria e café para quem gosta de literatura e encontros culturais.",
+    },
+]
+
+
+# ==================== DESAFIO DOS 7 DIAS (aba 1%) ====================
+# Conteúdo fixo: 7 dias x 5 missões = 35 missões. Cada missão é identificada
+# por (dia, posição), ambos começando em 1 — é essa dupla que o banco guarda
+# (models.OnePctMission) quando o usuário marca uma missão como concluída.
+ONEPCT_CHALLENGE_DAYS = 7
+ONEPCT_MISSIONS_PER_DAY = 5
+ONEPCT_CHALLENGE_TOTAL = ONEPCT_CHALLENGE_DAYS * ONEPCT_MISSIONS_PER_DAY
+
+ONEPCT_DAY_MESSAGE = (
+    "Você concluiu as 5 missões de hoje. Pequenas ações, repetidas com "
+    "consistência, constroem grandes mudanças."
+)
+ONEPCT_FINAL_MESSAGE = (
+    "Desafio concluído! Você dedicou tempo à sua evolução durante os últimos "
+    "7 dias. Continue construindo sua melhor versão, um passo de cada vez."
+)
+
+ONEPCT_CHALLENGE = [
+    {
+        "day": 1, "title": "Disciplina", "emoji": "🧭",
+        "subtitle": "Pequenos compromissos que treinam a constância.",
+        "missions": [
+            "Arrumar a cama ao acordar",
+            "Beber um copo de água",
+            "Organizar a mesa por 2 minutos",
+            "Fazer uma tarefa que está adiando",
+            "Ficar 5 minutos longe do celular",
+        ],
+    },
+    {
+        "day": 2, "title": "Conhecimento", "emoji": "📚",
+        "subtitle": "Aprender um pouco hoje já muda o amanhã.",
+        "missions": [
+            "Ler 2 páginas de um livro",
+            "Aprender uma palavra nova",
+            "Pesquisar algo que sempre quis entender",
+            "Assistir a um vídeo educativo de 3 minutos",
+            "Escrever uma coisa nova que aprendeu hoje",
+        ],
+    },
+    {
+        "day": 3, "title": "Corpo e energia", "emoji": "⚡",
+        "subtitle": "Movimento leve, no seu ritmo.",
+        "missions": [
+            "Fazer 10 agachamentos no seu ritmo",
+            "Alongar o corpo por 2 minutos",
+            "Caminhar pela casa durante 3 minutos",
+            "Fazer 10 respirações lentas e profundas",
+            "Levantar e se movimentar após ficar sentado",
+        ],
+    },
+    {
+        "day": 4, "title": "Mentalidade", "emoji": "🧠",
+        "subtitle": "Olhar para dentro com gentileza.",
+        "missions": [
+            "Escrever 3 coisas pelas quais é grato",
+            "Identificar algo que deseja melhorar em si",
+            "Escrever uma pequena vitória do dia",
+            "Passar 2 minutos em silêncio, sem telas",
+            "Transformar um pensamento negativo em uma ação possível",
+        ],
+    },
+    {
+        "day": 5, "title": "Organização", "emoji": "🗂️",
+        "subtitle": "Menos bagunça, mais clareza.",
+        "missions": [
+            "Jogar fora ou reciclar 3 itens desnecessários",
+            "Organizar uma pequena gaveta ou prateleira",
+            "Escrever as 3 prioridades de amanhã",
+            "Deixar separado algo que usará amanhã",
+            "Apagar 5 arquivos ou fotos desnecessários do celular",
+        ],
+    },
+    {
+        "day": 6, "title": "Bem-estar", "emoji": "🌿",
+        "subtitle": "Cuidar de você também é progresso.",
+        "missions": [
+            "Fazer algo de que gosta por 5 minutos",
+            "Enviar uma mensagem positiva para alguém",
+            "Fazer uma pausa de 5 minutos sem telas",
+            "Ouvir uma música prestando atenção nela",
+            "Reconhecer uma qualidade sua e escrevê-la",
+        ],
+    },
+    {
+        "day": 7, "title": "Evolução", "emoji": "🌱",
+        "subtitle": "Olhe para trás e escolha o próximo passo.",
+        "missions": [
+            "Revisar uma meta pessoal",
+            "Escrever algo que fez bem nesta semana",
+            "Identificar um hábito que deseja abandonar",
+            "Escolher um hábito pequeno para manter na próxima semana",
+            "Definir uma meta simples para os próximos 7 dias",
+        ],
+    },
+]
