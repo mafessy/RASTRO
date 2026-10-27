@@ -219,14 +219,27 @@ const RastroSecret = {
   },
 };
 
-/* ---------------- 1% novo: ciclo mensal/semanal/diário ---------------- */
-const RastroCycle = {
+/* ---------------- 1%: Desafio dos 7 dias ---------------- */
+const RastroChallenge = {
   init() {
-    const list = document.querySelectorAll(".goal[data-kind]");
-    if (!list.length) return;
+    const root = document.getElementById("challenge");
+    if (!root) return;
 
-    // progresso salvo só no navegador (sem banco de dados)
+    const chips = Array.from(root.querySelectorAll(".day-chip"));
+    const panels = Array.from(root.querySelectorAll(".challenge-day"));
+    if (!chips.length || !panels.length) return; // desafio indisponível
+
+    const perDay = parseInt(root.dataset.perDay, 10) || 5;
+    const totalMissions = parseInt(root.dataset.total, 10) || chips.length * perDay;
+    const totalDays = chips.length;
     const KEY = "rastro_desafio_7dias";
+
+    const $ = (id) => document.getElementById(id);
+    const toast = $("ch-toast");
+    let toastTimer = null;
+    let current = 1;
+
+    // ---------- persistência (só no navegador) ----------
     function loadSaved() {
       try {
         const raw = JSON.parse(localStorage.getItem(KEY) || "[]");
@@ -234,31 +247,166 @@ const RastroCycle = {
       } catch (e) { return []; }
     }
     function save() {
-      const list = [];
-      root.querySelectorAll(".mission.done").forEach((m) => list.push(`${m.dataset.day}-${m.dataset.pos}`));
-      try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) { showError(); }
+      const list = Array.from(root.querySelectorAll(".mission.done"))
+        .map((m) => `${m.dataset.day}-${m.dataset.pos}`);
+      try { localStorage.setItem(KEY, JSON.stringify(list)); }
+      catch (e) { showToast("Não foi possível salvar agora. Tente novamente."); }
     }
 
+    // ---------- helpers ----------
+    function showToast(msg) {
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { toast.hidden = true; }, 3000);
+    }
+
+    function doneCount(day) {
+      return root.querySelectorAll(`.mission.done[data-day="${day}"]`).length;
+    }
+    function isDayComplete(day) { return doneCount(day) >= perDay; }
+
+    // um dia só abre se TODOS os dias anteriores estiverem completos
+    function isUnlocked(day) {
+      for (let d = 1; d < day; d++) if (!isDayComplete(d)) return false;
+      return true;
+    }
+    function firstIncompleteDay() {
+      for (let d = 1; d <= totalDays; d++) if (!isDayComplete(d)) return d;
+      return totalDays;
+    }
+
+    function paint(item, done) {
+      item.classList.toggle("done", done);
+      item.setAttribute("aria-checked", done ? "true" : "false");
+      const check = item.querySelector(".goal-check");
+      if (check) check.textContent = done ? "✓" : "";
+    }
+
+    // ---------- atualização da interface ----------
+    function refreshDay(day) {
+      const n = doneCount(day);
+      const complete = n >= perDay;
+
+      const chip = root.querySelector(`.day-chip[data-day="${day}"]`);
+      if (chip) {
+        const count = chip.querySelector(".day-chip-count");
+        if (count) count.textContent = `${n}/${perDay}`;
+        chip.classList.toggle("is-done", complete);
+        chip.classList.toggle("is-progress", !complete && n > 0);
+        chip.classList.toggle("is-idle", n === 0);
+      }
+
+      const panel = $(`day-panel-${day}`);
+      if (panel) {
+        const label = panel.querySelector(".challenge-day-count");
+        if (label) label.textContent = `${n}/${perDay} missões concluídas`;
+        const msg = panel.querySelector(".challenge-day-message");
+        if (msg) msg.hidden = !complete;
+      }
+    }
+
+    function refreshLocks() {
+      chips.forEach((chip) => {
+        const day = parseInt(chip.dataset.day, 10);
+        const locked = !isUnlocked(day);
+        chip.classList.toggle("is-locked", locked);
+        chip.setAttribute("aria-disabled", locked ? "true" : "false");
+      });
+
+      // botão "Dia N →" só habilita quando o dia atual está completo
+      root.querySelectorAll(".challenge-step").forEach((btn) => {
+        const target = parseInt(btn.dataset.go, 10);
+        const locked = !isUnlocked(target);
+        btn.classList.toggle("is-locked", locked);
+        btn.setAttribute("aria-disabled", locked ? "true" : "false");
+        btn.title = locked ? `Complete as ${perDay} missões do Dia ${target - 1} para liberar` : "";
+      });
+    }
+
+    function refreshTotals() {
+      const done = root.querySelectorAll(".mission.done").length;
+      const pct = Math.round((done * 100) / totalMissions);
+      const remaining = totalMissions - done;
+
+      const total = $("ch-total");
+      if (total) total.textContent = `${done}/${totalMissions} missões`;
+      const percent = $("ch-percent");
+      if (percent) percent.textContent = `${pct}%`;
+      const fill = $("ch-bar-fill");
+      if (fill) fill.style.width = `${pct}%`;
+      const bar = $("ch-bar");
+      if (bar) bar.setAttribute("aria-valuenow", String(pct));
+      const rem = $("ch-remaining");
+      if (rem) {
+        rem.textContent = remaining === 0
+          ? "Você completou todas as missões."
+          : `Faltam ${remaining} ${remaining === 1 ? "missão" : "missões"} para completar o desafio.`;
+      }
+      const final = $("ch-final");
+      if (final) final.hidden = remaining !== 0;
+    }
+
+    function refreshAll() {
+      for (let d = 1; d <= totalDays; d++) refreshDay(d);
+      refreshLocks();
+      refreshTotals();
+    }
+
+    // ---------- navegação entre dias ----------
+    function selectDay(day, opts = {}) {
+      day = parseInt(day, 10);
+      if (!day || day < 1 || day > totalDays) return;
+
+      if (!isUnlocked(day)) {
+        if (!opts.silent) {
+          showToast(`Complete todas as missões do Dia ${firstIncompleteDay()} para liberar o Dia ${day}.`);
+        }
+        return;
+      }
+
+      current = day;
+      panels.forEach((panel) => { panel.hidden = parseInt(panel.dataset.day, 10) !== day; });
+      chips.forEach((chip) => {
+        chip.setAttribute("aria-selected", parseInt(chip.dataset.day, 10) === day ? "true" : "false");
+      });
+    }
+
+    // ---------- marcar / desmarcar missão ----------
     function toggle(item) {
       paint(item, !item.classList.contains("done"));
-      refresh(item.dataset.day);
       save();
+      refreshAll();
+      // se desmarcar uma missão trancou o dia aberto, volta pro primeiro dia liberado
+      if (!isUnlocked(current)) selectDay(firstIncompleteDay(), { silent: true });
     }
 
-    // restaura o que já foi marcado e abre no primeiro dia incompleto
+    // ---------- estado inicial ----------
     const saved = new Set(loadSaved());
-    root.querySelectorAll(".mission").forEach((m) => paint(m, saved.has(`${m.dataset.day}-${m.dataset.pos}`)));
-    chips.forEach((chip) => refresh(chip.dataset.day));
-    const firstOpen = Array.from(chips).find((c) => !c.classList.contains("is-done"));
-    selectDay(firstOpen ? firstOpen.dataset.day : 1);
+    root.querySelectorAll(".mission").forEach((m) => {
+      paint(m, saved.has(`${m.dataset.day}-${m.dataset.pos}`));
+    });
+    refreshAll();
+    selectDay(firstIncompleteDay(), { silent: true });
 
+    // ---------- eventos ----------
     chips.forEach((chip) => chip.addEventListener("click", () => selectDay(chip.dataset.day)));
+
     root.querySelectorAll(".challenge-step").forEach((btn) => {
       btn.addEventListener("click", () => {
-        selectDay(btn.dataset.go);
+        const target = parseInt(btn.dataset.go, 10);
+        // avançar exige o dia atual completo (o botão fica "apagado", mas clicável, para explicar o motivo)
+        if (target > current && !isDayComplete(current)) {
+          const faltam = perDay - doneCount(current);
+          showToast(`Faltam ${faltam} ${faltam === 1 ? "missão" : "missões"} no Dia ${current} para liberar o Dia ${target}.`);
+          return;
+        }
+        selectDay(target);
         root.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     });
+
     root.querySelectorAll(".mission").forEach((item) => {
       item.addEventListener("click", () => toggle(item));
       item.addEventListener("keydown", (e) => {
