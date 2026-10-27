@@ -27,6 +27,7 @@ from backend.data import (
     ONEPCT_DAY_MESSAGE,
     ONEPCT_FINAL_MESSAGE,
     ONEPCT_MISSIONS_PER_DAY,
+    ONEPCT_MISSION_POINTS,
     REWARDS,
     SATISFACTION_CONTEXTS,
     detect_barrier,
@@ -99,15 +100,35 @@ def talk():
     )
 
 
+_onepct_table_ready = False
+
+
+def _ensure_onepct_table():
+    """Garante que a tabela onepct_missions existe (cria sozinha na 1ª vez)."""
+    global _onepct_table_ready
+    if _onepct_table_ready:
+        return
+    OnePctMission.__table__.create(bind=db.engine, checkfirst=True)
+    _onepct_table_ready = True
+
+
 def _challenge_context(user):
     """Monta o desafio dos 7 dias da aba 1%.
 
-    O desafio NÃO usa banco de dados: as missões vêm do data.py e o que o
-    visitante marca fica salvo no próprio navegador (localStorage), lido pelo
-    app.js. Por isso ele carrega sempre, mesmo sem a tabela onepct_missions.
+    As missões vêm do data.py; o que a pessoa concluiu fica no banco
+    (models.OnePctMission: existir a linha = missão concluída). Cada missão
+    concluída vale ONEPCT_MISSION_POINTS pontos em user.points.
     """
     done = set()
     error = False
+
+    try:
+        _ensure_onepct_table()
+        rows = OnePctMission.query.filter_by(user_id=user.id).all()
+        done = {(row.day, row.position) for row in rows}
+    except SQLAlchemyError:
+        db.session.rollback()
+        error = True
 
     days = []
     for day in ONEPCT_CHALLENGE:
@@ -125,9 +146,10 @@ def _challenge_context(user):
         })
 
     total_done = sum(day["done_count"] for day in days)
-    # abre no primeiro dia ainda incompleto (ou no dia 1 se tudo estiver feito)
+    # abre no primeiro dia ainda incompleto (ou no último se tudo estiver feito)
     selected_day = next(
-        (day["day"] for day in days if day["done_count"] < ONEPCT_MISSIONS_PER_DAY), 1
+        (day["day"] for day in days if day["done_count"] < ONEPCT_MISSIONS_PER_DAY),
+        len(days),
     )
     return {
         "challenge_days": days,
@@ -138,6 +160,8 @@ def _challenge_context(user):
         "challenge_error": error,
         "challenge_day_message": ONEPCT_DAY_MESSAGE,
         "challenge_final_message": ONEPCT_FINAL_MESSAGE,
+        "challenge_mission_points": ONEPCT_MISSION_POINTS,
+        "challenge_user_points": user.points,
     }
 
 
@@ -371,6 +395,69 @@ def api_goals_toggle():
         "cycle_status": cycle.status,
         "progress": progress,
         "remaining": remaining,
+    })
+
+
+@bp.post("/api/onepct/mission")
+@login_required
+def api_onepct_mission():
+    """Marca/desmarca uma missão do desafio dos 7 dias.
+
+    data = {day: 1..7, position: 1..5, done: true|false}
+    Concluir dá ONEPCT_MISSION_POINTS pontos; desmarcar devolve os mesmos pontos
+    (assim não dá pra ganhar pontos repetindo). A rota é idempotente: pedir o
+    mesmo estado duas vezes não soma nada na segunda.
+    """
+    user = current_user()
+    data = request.get_json(silent=True) or {}
+    try:
+        day = int(data.get("day"))
+        position = int(data.get("position"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "dados inválidos"}), 400
+    if not (1 <= day <= ONEPCT_CHALLENGE_DAYS and 1 <= position <= ONEPCT_MISSIONS_PER_DAY):
+        return jsonify({"error": "missão inexistente"}), 400
+    want_done = bool(data.get("done"))
+
+    try:
+        _ensure_onepct_table()
+        rows = OnePctMission.query.filter_by(user_id=user.id).all()
+        done = {(row.day, row.position): row for row in rows}
+        current = done.get((day, position))
+
+        if want_done and current is None:
+            # o dia só abre com todas as missões dos dias anteriores concluídas
+            for previous in range(1, day):
+                count = sum(1 for (d, _p) in done if d == previous)
+                if count < ONEPCT_MISSIONS_PER_DAY:
+                    return jsonify({"error": "day_locked", "day": previous}), 403
+            db.session.add(OnePctMission(user_id=user.id, day=day, position=position))
+            done[(day, position)] = True
+            user.points += ONEPCT_MISSION_POINTS
+            unlock(user, "unlocked_world")  # 1% -> WORLD: ao concluir a 1ª ação
+            gained = ONEPCT_MISSION_POINTS
+        elif not want_done and current is not None:
+            db.session.delete(current)
+            done.pop((day, position), None)
+            user.points = max(0, user.points - ONEPCT_MISSION_POINTS)
+            gained = -ONEPCT_MISSION_POINTS
+        else:
+            gained = 0  # já estava no estado pedido
+
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()  # clique duplo simultâneo: a outra requisição já gravou
+        return jsonify({"error": "conflito, tente de novo"}), 409
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"error": "db_error"}), 500
+
+    return jsonify({
+        "ok": True,
+        "done": want_done,
+        "gained": gained,
+        "points": user.points,
+        "total_done": len(done),
     })
 
 
