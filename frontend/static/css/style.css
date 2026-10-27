@@ -2379,42 +2379,7 @@ body{
   box-shadow:0 8px 24px rgba(0,0,0,.25)
 }
 
-/* ---------------- 1%: abas "Desafio dos 7 dias" / "Meu ciclo" ---------------- */
-.onepct-tabs{
-  display:flex;
-  gap:6px;
-  max-width:1000px;
-  margin:0 auto 16px;
-  background:rgba(2,15,31,.5);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:4px
-}
-
-.onepct-tab{
-  flex:1;
-  border:0;
-  background:transparent;
-  color:#93a2bf;
-  font:600 12px Inter,sans-serif;
-  padding:11px 8px;
-  border-radius:9px;
-  cursor:pointer;
-  transition:.2s
-}
-
-.onepct-tab:hover{color:#fff}
-
-.onepct-tab.active{
-  background:linear-gradient(135deg,#21ad8a,#127b6b);
-  color:#eafff8
-}
-
-.onepct-tab:focus-visible{
-  outline:2px solid var(--brand);
-  outline-offset:2px
-}
-
+/* ---------------- 1%: container do desafio ---------------- */
 .onepct-pane{
   max-width:1000px;
   margin:0 auto
@@ -2630,6 +2595,24 @@ body{
 }
 
 .challenge-step:hover{background:rgba(79,224,179,.12)}
+
+.challenge-step.is-locked{
+  opacity:.45;
+  cursor:not-allowed;
+  background:rgba(255,255,255,.03);
+  border-color:rgba(255,255,255,.12);
+  color:var(--muted)
+}
+
+.challenge-step.is-locked:hover{background:rgba(255,255,255,.03)}
+
+.day-chip.is-locked{
+  opacity:.5;
+  cursor:not-allowed
+}
+
+.day-chip.is-locked:hover{border-color:inherit}
+.day-chip.is-locked .day-chip-name::after{content:" 🔒";font-size:10px}
 
 .challenge-toast{
   position:fixed;
