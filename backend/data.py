@@ -694,6 +694,7 @@ WORLD_REAL_PLACES = [
 ONEPCT_CHALLENGE_DAYS = 7
 ONEPCT_MISSIONS_PER_DAY = 5
 ONEPCT_CHALLENGE_TOTAL = ONEPCT_CHALLENGE_DAYS * ONEPCT_MISSIONS_PER_DAY
+ONEPCT_MISSION_POINTS = 5  # pontos ganhos a cada missão concluída (desmarcar devolve)
 
 ONEPCT_DAY_MESSAGE = (
     "Você concluiu as 5 missões de hoje. Pequenas ações, repetidas com "
