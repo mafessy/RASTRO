@@ -232,31 +232,61 @@ const RastroChallenge = {
     const perDay = parseInt(root.dataset.perDay, 10) || 5;
     const totalMissions = parseInt(root.dataset.total, 10) || chips.length * perDay;
     const totalDays = chips.length;
-    const KEY = "rastro_desafio_7dias";
+    const missionPoints = parseInt(root.dataset.missionPoints, 10) || 5;
+    const endpoint = root.dataset.endpoint || "/api/onepct/mission";
 
     const $ = (id) => document.getElementById(id);
     const toast = $("ch-toast");
     let toastTimer = null;
     let current = 1;
 
-    // ---------- persistência (só no navegador) ----------
-    function loadSaved() {
-      try {
-        const raw = JSON.parse(localStorage.getItem(KEY) || "[]");
-        return Array.isArray(raw) ? raw : [];
-      } catch (e) { return []; }
+    // ---------- persistência (servidor: grava a missão e dá os pontos) ----------
+    // as requisições vão em fila, uma de cada vez, para a ordem dos cliques ser respeitada
+    let queue = Promise.resolve();
+    function saveMission(item, done) {
+      const body = JSON.stringify({
+        day: parseInt(item.dataset.day, 10),
+        position: parseInt(item.dataset.pos, 10),
+        done,
+      });
+      queue = queue.then(async () => {
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body,
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) throw Object.assign(new Error("save"), { data });
+          updatePoints(data.points);
+          if (data.gained > 0) showToast(`+${data.gained} pontos! Missão concluída.`, "success");
+          else if (data.gained < 0) showToast(`${data.gained} pontos (missão desmarcada).`, "info");
+        } catch (err) {
+          // não salvou: desfaz a marcação na tela para não mostrar algo que não valeu
+          if (item.classList.contains("done") === done) {
+            paint(item, !done);
+            refreshAll();
+            if (!isUnlocked(current)) selectDay(firstIncompleteDay(), { silent: true });
+          }
+          const locked = err.data && err.data.error === "day_locked";
+          showToast(locked
+            ? "Complete todas as missões do dia anterior primeiro."
+            : "Não foi possível salvar agora. Tente novamente.", "error");
+        }
+      });
     }
-    function save() {
-      const list = Array.from(root.querySelectorAll(".mission.done"))
-        .map((m) => `${m.dataset.day}-${m.dataset.pos}`);
-      try { localStorage.setItem(KEY, JSON.stringify(list)); }
-      catch (e) { showToast("Não foi possível salvar agora. Tente novamente."); }
+
+    function updatePoints(points) {
+      const el = $("ch-points");
+      if (el && typeof points === "number") el.textContent = String(points);
     }
 
     // ---------- helpers ----------
-    function showToast(msg) {
+    function showToast(msg, kind = "error") {
       if (!toast) return;
       toast.textContent = msg;
+      toast.classList.toggle("is-success", kind === "success");
+      toast.classList.toggle("is-info", kind === "info");
       toast.hidden = false;
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => { toast.hidden = true; }, 3000);
@@ -375,18 +405,16 @@ const RastroChallenge = {
 
     // ---------- marcar / desmarcar missão ----------
     function toggle(item) {
-      paint(item, !item.classList.contains("done"));
-      save();
+      const done = !item.classList.contains("done");
+      paint(item, done);
       refreshAll();
+      saveMission(item, done);
       // se desmarcar uma missão trancou o dia aberto, volta pro primeiro dia liberado
       if (!isUnlocked(current)) selectDay(firstIncompleteDay(), { silent: true });
     }
 
     // ---------- estado inicial ----------
-    const saved = new Set(loadSaved());
-    root.querySelectorAll(".mission").forEach((m) => {
-      paint(m, saved.has(`${m.dataset.day}-${m.dataset.pos}`));
-    });
+    // o que já foi concluído vem do servidor, já marcado no HTML
     refreshAll();
     selectDay(firstIncompleteDay(), { silent: true });
 
