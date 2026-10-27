@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/accessibility.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/crisis.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/account_created.css') }}">
@@ -253,7 +253,7 @@
 
 
   <script src="{{ url_for('static', filename='js/estrela.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}?v=2"></script>
   <script src="{{ url_for('static', filename='js/accessibility.js') }}"></script>
   <script src="{{ url_for('static', filename='js/crisis.js') }}"></script>
   {% block scripts %}{% endblock %}
