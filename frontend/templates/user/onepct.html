@@ -14,7 +14,9 @@
     <div class="challenge" id="challenge"
          data-total="{{ challenge_total }}"
          data-per-day="{{ challenge_per_day }}"
-         data-selected="{{ challenge_selected_day }}">
+         data-selected="{{ challenge_selected_day }}"
+         data-mission-points="{{ challenge_mission_points }}"
+         data-endpoint="{{ url_for('main.api_onepct_mission') }}">
 
       {% if challenge_error %}
       <div class="insight-card challenge-error" role="alert">
@@ -28,6 +30,11 @@
         <p class="eyebrow sun-text">DESAFIO DOS 7 DIAS</p>
         <h2>Melhore 1% por dia</h2>
         <p>Cinco pequenas ações por dia, gratuitas e possíveis de fazer em casa. Siga no seu ritmo: você pode abrir qualquer dia quando quiser.</p>
+
+        <p class="challenge-points-line">
+          Cada missão concluída vale <strong>+{{ challenge_mission_points }} pontos</strong> ·
+          Seus pontos: <strong id="ch-points">{{ challenge_user_points }}</strong>
+        </p>
 
         <div class="challenge-progress-head">
           <strong id="ch-total">{{ challenge_total_done }}/{{ challenge_total }} missões</strong>
