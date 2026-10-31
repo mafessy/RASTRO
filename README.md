@@ -90,7 +90,6 @@ RASTRO-main/
 ├── tests/                     # Testes automatizados
 ├── docs/                      # Documentação técnica e arquitetura
 ├── requirements.txt           # Dependências Python
-├── .env.example               # Exemplo de configuração local
 ├── .gitignore                 # Exclusões de artefatos e segredos
 ├── README.md                  # Visão geral do projeto
 └── SETUP.md                   # Instalação e execução
